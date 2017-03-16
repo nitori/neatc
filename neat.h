@@ -6,70 +6,63 @@
 #define NEAT_NEAT_H
 
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <math.h>
+
 #define true 1
 #define false 0
 
 typedef uint8_t bool;
 
-typedef struct NodeGene {
+struct Node;
+typedef struct Node Node;
 
-} NodeGene;
+struct Connection;
+typedef struct Connection Connection;
 
-typedef struct ConnectionGene {
-    NodeGene* in;
-    NodeGene* out;
-    double weight;
-    bool enabled;
-    int32_t inumber;  // innovation number
+struct Genome;
+typedef struct Genome Genome;
 
-    struct Genome* owner;
+struct Species;
+typedef struct Species Species;
 
-    struct ConnectionGene* next;
-    struct ConnectionGene* prev;
-} ConnectionGene;
+struct Population;
+typedef struct Population Population;
 
+struct DeltaResult;
+typedef struct DeltaResult DeltaResult;
 
-typedef struct Genome {
-    ConnectionGene* head;
-    ConnectionGene* tail;
-    int32_t conn_count;
-    double fitness;
-} Genome;
+#include "node.h"
+#include "connection.h"
+#include "genome.h"
 
 
-typedef struct Species {
+struct Species {
     Genome** genomes;
     int32_t genome_count;
     double fitness;
-} Species;
+};
 
 
-typedef struct Population {
+struct Population {
     Species** species;
     int32_t species_count;
-} Population;
+};
 
 
-typedef struct DeltaResult {
+struct DeltaResult {
     double delta;
     int32_t disjoint_count;
     double disjoint;
     int32_t excess_count;
     double excess;
     double avg_weight_diff;
-} DeltaResult;
+};
 
 
 int32_t next_inumber();
-int print_genome(Genome* g);
-
-Genome* init_genome(int32_t input_nodes, int32_t output_nodes);
-ConnectionGene* init_connection(NodeGene* in, NodeGene* out, double weight, bool enabled);
-int add_connection(Genome* g, ConnectionGene* c);
-ConnectionGene* clone_connection(ConnectionGene* c);
-int add_node(Genome* g, ConnectionGene* c_old);
-
-
-DeltaResult* delta_genomes(Genome* g1, Genome* g2, double coeff_d, double coeff_e, double coeff_w);
 
 #endif //NEAT_NEAT_H
