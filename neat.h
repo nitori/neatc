@@ -18,19 +18,12 @@
 
 typedef uint8_t bool;
 
-struct Connection;
+#include "vector.h"
+
 typedef struct Connection Connection;
-
-struct Genome;
 typedef struct Genome Genome;
-
-struct Species;
 typedef struct Species Species;
-
-struct Population;
 typedef struct Population Population;
-
-struct DeltaResult;
 typedef struct DeltaResult DeltaResult;
 
 #include "connection.h"
