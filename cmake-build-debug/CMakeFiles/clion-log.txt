@@ -1,0 +1,4 @@
+/home/nitori/Downloads/programme/clion-2016.3.4/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/nitori/source/c/git/neat
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/nitori/source/c/git/neat/cmake-build-debug
