@@ -4,14 +4,12 @@
 #include "neat.h"
 
 
-Connection* init_connection(Node* in, Node *out,
+Connection* init_connection(int32_t in, int32_t out,
                             double weight, bool enabled) {
     Connection* c = calloc(1, sizeof(Connection));
     if (c == NULL) {
         return NULL;
     }
-    in->to = c;
-    out->from = c;
     c->in = in;
     c->out = out;
     c->weight = weight;

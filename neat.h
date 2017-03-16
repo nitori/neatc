@@ -11,14 +11,12 @@
 #include <errno.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #define true 1
 #define false 0
 
 typedef uint8_t bool;
-
-struct Node;
-typedef struct Node Node;
 
 struct Connection;
 typedef struct Connection Connection;
@@ -35,7 +33,6 @@ typedef struct Population Population;
 struct DeltaResult;
 typedef struct DeltaResult DeltaResult;
 
-#include "node.h"
 #include "connection.h"
 #include "genome.h"
 
