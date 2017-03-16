@@ -9,21 +9,29 @@ int main() {
 
     print_genome(g1);
 
-    add_connection(g1, init_connection(1, 3, rand() / (double)RAND_MAX, true));
-    add_connection(g1, init_connection(2, 3, rand() / (double)RAND_MAX, true));
-    add_connection(g1, init_connection(0, 3, rand() / (double)RAND_MAX, true));
-
-    print_genome(g1);
-
     mutate_connect(g1);
+    mutate_split_connection(g1);
+    mutate_connect(g1);
+    mutate_connect(g1);
+    mutate_split_connection(g1);
+
+    Genome *g2 = clone_genome(g1);
 
     print_genome(g1);
+    print_genome(g2);
 
-    mutate_split_connection(g1);
-    mutate_split_connection(g1);
-    mutate_split_connection(g1);
+    printf("----------\n");
+
+    mutate_connect(g2);
+    mutate_connect(g2);
+    mutate_split_connection(g2);
 
     print_genome(g1);
+    print_genome(g2);
+
+    Genome* g3 = mate(g2, g1);
+
+    print_genome(g3);
 
     return 0;
 }

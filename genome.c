@@ -88,6 +88,24 @@ DeltaResult* delta_genomes(Genome* g1, Genome* g2, double coeff_d, double coeff_
     return result;
 }
 
+Genome* clone_genome(Genome* g) {
+    Genome* clone = calloc(1, sizeof(*g));
+    memcpy(clone, g, sizeof(*g));
+
+    clone->head = NULL;
+    clone->tail = NULL;
+    clone->conn_count = 0;
+
+    Connection* current = g->head;
+    Connection* c;
+    while (current) {
+        c = clone_connection(current);
+        add_connection(clone, c);
+        current = current->next;
+    }
+    return clone;
+}
+
 int mutate_split_connection(Genome* g) {
     int r = rand() % g->conn_count;
     Connection* c = get_connection(g, r);
