@@ -33,15 +33,13 @@ typedef struct DeltaResult DeltaResult;
 
 
 struct Species {
-    Genome** genomes;
-    int32_t genome_count;
+    Vector* genomes;
     double fitness;
 };
 
 
 struct Population {
-    Species** species;
-    int32_t species_count;
+    Vector* species;
 };
 
 
