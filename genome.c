@@ -224,6 +224,13 @@ int mutate_connect(Genome* g) {
     return 0;
 }
 
+int mutate_weight(Genome* g) {
+    int r = rand() % g->connections->size;
+    Connection* c = vector_get(g->connections, r);
+    c->weight *= ((double)rand() / (double)RAND_MAX);
+    return 0;
+}
+
 Genome* mate(Genome* g1, Genome* g2) {
     Genome* offspring = new_genome(0, 0);
     // TODO: make this work

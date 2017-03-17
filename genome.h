@@ -30,6 +30,8 @@ Node* get_random_node(Genome* g);
 
 int mutate_split_connection(Genome* g);
 int mutate_connect(Genome* g);
+int mutate_weight(Genome* g);
+
 void set_genome_inputs(Genome* g, Vector* inputs);
 void reset_genome(Genome* g);
 void evaluate_genome(Genome* g);
