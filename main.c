@@ -35,5 +35,7 @@ int main() {
 
     print_genome(g2);
 
+    save_genome(g2, "genome2.txt");
+
     return 0;
 }

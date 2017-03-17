@@ -262,3 +262,44 @@ void free_genome(Genome* g) {
     vector_free(g->outputs);
     free(g);
 }
+
+void save_genome(Genome* g, const char* filename) {
+    FILE *f = fopen(filename, "w");
+    if (f == NULL)
+    {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+    write_nodes(f, "inputs", g->inputs);
+    write_nodes(f, "hidden", g->hidden);
+    write_nodes(f, "outputs", g->outputs);
+
+    fprintf(f, "connections:\n");
+    int i;
+    Connection* c;
+    for (i=0; i<g->connections->size; i++) {
+        c = vector_get(g->connections, i);
+        fprintf(f, "%d %s %f %d %d\n",
+                c->inumber,
+                c->enabled ? "on" : "off",
+                c->weight,
+                c->in->id,
+                c->out->id);
+    }
+
+    fclose(f);
+}
+
+void write_nodes(FILE *f, const char* name, Vector* nodes) {
+    int i;
+    Node* node;
+    fprintf(f, "%s = ", name);
+    for (i=0; i<nodes->size; i++) {
+        node = vector_get(nodes, i);
+        if (i > 0) {
+            fprintf(f, ", ");
+        }
+        fprintf(f, "%d", node->id);
+    }
+    fprintf(f, "\n");
+}

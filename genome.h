@@ -32,5 +32,7 @@ int mutate_connect(Genome* g);
 void set_genome_inputs(Genome* g, Vector* inputs);
 void evaluate_genome(Genome* g);
 void free_genome(Genome* g);
+void save_genome(Genome* g, const char* filename);
+void write_nodes(FILE *f, const char* name, Vector* nodes);
 
 #endif //NEAT_GENOME_H
