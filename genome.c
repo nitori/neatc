@@ -217,7 +217,8 @@ int mutate_connect(Genome* g) {
         node2 = get_random_node(g);
     } while(node1->level >= node2->level);
 
-    Connection* c = new_connection(1.0, true);
+    double weight = ((double)rand() / (double)RAND_MAX) * 2.0;
+    Connection* c = new_connection(weight, true);
     connect(c, node1, node2);
     add_connection(g, c);
 
