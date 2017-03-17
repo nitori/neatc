@@ -48,7 +48,7 @@ void print_nodes(Vector* nodes) {
         if (i > 0) {
             printf(", ");
         }
-        printf("%d [%p]", node->id, node);
+        printf("%d %f [%p]", node->id, node->value, node);
     }
 }
 
@@ -226,6 +226,26 @@ Genome* mate(Genome* g1, Genome* g2) {
     // TODO: make this work
 
     return offspring;
+}
+
+void set_genome_inputs(Genome* g, Vector* inputs) {
+    if (g->inputs->size != inputs->size) {
+        fprintf(stderr, "Genome inputs vector and supplied inputs are not of same size.\n");
+        exit(-1);
+    }
+
+    int i;
+    double* value;
+    Node* node;
+    for (i=0; i<inputs->size; i++) {
+        node = vector_get(g->inputs, i);
+        value = vector_get(inputs, i);
+        node->value = *value;
+    }
+}
+
+void evaluate_genome(Genome* g) {
+
 }
 
 void free_genome(Genome* g) {

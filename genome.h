@@ -29,6 +29,8 @@ Node* find_node_in_vector(Vector* v, int32_t id);
 
 int mutate_split_connection(Genome* g);
 int mutate_connect(Genome* g);
+void set_genome_inputs(Genome* g, Vector* inputs);
+void evaluate_genome(Genome* g);
 void free_genome(Genome* g);
 
 #endif //NEAT_GENOME_H
