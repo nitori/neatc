@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
     double c = -30.0;
     vector_append(inputs, &a);
     vector_append(inputs, &b);
-    vector_append(inputs, &b);
+    vector_append(inputs, &c);
 
     set_genome_inputs(g1, inputs);
     evaluate_genome(g1);
