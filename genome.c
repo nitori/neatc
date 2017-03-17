@@ -78,7 +78,16 @@ Genome* new_genome(int32_t input_nodes, int32_t output_nodes) {
 
 void delta_genomes(DeltaResult* result, Genome* g1, Genome* g2, double coeff_d, double coeff_e, double coeff_w) {
     if (g1->connections->size == 0 || g2->connections->size == 0) {
-        fprintf(stderr, "Genomes have to be non-empty to calculate delta.\n");
+        result->disjoint_count = 0;
+        result->disjoint = 0.0;
+        result->excess_count = abs(g1->connections->size - g2->connections->size);
+        if (result->excess_count > 0) {
+            result->excess = (coeff_e * (double) result->excess_count) / (double) result->excess_count;
+        } else {
+            result->excess = 0.0;
+        }
+        result->avg_weight_diff = 0.0;
+        result->delta = result->excess;
         return;
     }
     int32_t max_count = g1->connections->size > g2->connections->size ? g1->connections->size : g2->connections->size;
