@@ -4,8 +4,9 @@ import sys
 import os
 from PIL import Image, ImageDraw
 
-Node = namedtuple('Node', ['id', 'level'])
+Node = namedtuple('Node', ['id', 'level', 'center'])
 Connection = namedtuple('Connection', ['inumber', 'enabled', 'weight', 'node_in', 'node_out'])
+Point = namedtuple('Point', ['x', 'y'])
 
 
 def read_data(filename):
@@ -14,7 +15,7 @@ def read_data(filename):
 
     def to_node(s):
         node_id, node_level = s.split()
-        return Node(int(node_id), int(node_level[1:-1]))
+        return Node(int(node_id), int(node_level[1:-1]), None)
 
 
     inputs = []
@@ -59,8 +60,8 @@ def render(data):
     im = Image.new('RGB', size, (255, 255, 255))
     draw = ImageDraw.Draw(im)
 
-    print(size)
     r = 5
+    node_map = {}
     middle_x = (boxw*max_width) / 2
     for y_base, nodes in enumerate(node_levels):
         y = (y_base * boxh) + boxh/2
@@ -69,8 +70,14 @@ def render(data):
             x_base = x_rel + boxw * x_relbase
             x = x_base + boxw/2
             x += middle_x
-            print(x, y)
             draw.ellipse([x-r, y-r, x+r, y+r], fill=(0, 0, 0))
+            nodes[x_relbase] = Node(node.id, node.level, Point(x, y))
+            node_map[node.id] = nodes[x_relbase]
+
+    for connection in connections:
+        node_in = node_map[connection.node_in]
+        node_out = node_map[connection.node_out]
+        draw.line([node_in.center, node_out.center], fill=(0, 0, 0), width=3)
 
     im.show()
 
