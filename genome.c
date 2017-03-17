@@ -273,6 +273,13 @@ void set_genome_inputs(Genome* g, Vector* inputs) {
     }
 }
 
+void get_genome_outputs(Genome* g, Vector* outputs) {
+    int i;
+    for (i=0; i<g->outputs->size; i++) {
+        vector_set(outputs, i, vector_get(g->outputs, i));
+    }
+}
+
 void evaluate_genome(Genome* g) {
     int level;
     int i;

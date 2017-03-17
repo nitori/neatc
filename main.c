@@ -54,5 +54,17 @@ int main(int argc, char** argv) {
     printf("    New nodes (split): %d\n", count_splits);
     printf("    Weight changes:    %d\n", count_weight);
 
+    Vector outputs;
+    vector_init(&outputs);
+    get_genome_outputs(g1, &outputs);
+
+    Node* node;
+    printf("\n");
+    printf("Outputs:\n");
+    for (i=0; i<outputs.size; i++) {
+        node = vector_get(&outputs, i);
+        printf("    %f\n", node->value);
+    }
+
     return 0;
 }
