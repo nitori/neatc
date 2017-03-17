@@ -15,6 +15,10 @@ int main() {
 
     Genome *g2 = clone_genome(g1);
 
+    mutate_split_connection(g2);
+    mutate_split_connection(g2);
+    mutate_connect(g2);
+
     print_genome(g1);
     print_genome(g2);
 
