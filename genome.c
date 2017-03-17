@@ -273,14 +273,31 @@ void evaluate_genome(Genome* g) {
     for (level=0; level<=MAX_HIDDEN_LEVELS+1; level++) {
         for (i=0; i<g->connections->size; i++) {
             c = vector_get(g->connections, i);
+            if (!c->enabled) {
+                continue;
+            }
             if (c->in->level == level) {
                 if (!c->in->evaluated) {
-                    c->in->value = c->in->value / (double)c->in->input_count;
+                    if (c->in->input_count > 0) {
+                        c->in->value = c->in->value / (double)c->in->input_count;
+                    } else {
+                        c->in->value = 0.0;
+                    }
                     c->in->evaluated = true;
                 }
                 c->out->value += (c->in->value * c->weight);
                 c->out->input_count++;
             }
+        }
+    }
+
+    Node* node;
+    for (i=0; i<g->outputs->size; i++) {
+        node = vector_get(g->outputs, i);
+        if (node->input_count > 0) {
+            node->value = node->value / (double)node->input_count;
+        } else {
+            node->value = 0.0;
         }
     }
 }
