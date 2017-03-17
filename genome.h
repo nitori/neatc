@@ -33,7 +33,7 @@ int mutate_connect(Genome* g);
 int mutate_weight(Genome* g);
 
 void set_genome_inputs(Genome* g, Vector* inputs);
-double* get_genome_outputs(Genome* g);
+void get_genome_outputs(Genome* g, double* outputs);
 void reset_genome(Genome* g);
 void evaluate_genome(Genome* g);
 double calculate_simple_fitness(double* outputs, double* desired, size_t size);

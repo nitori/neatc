@@ -273,15 +273,13 @@ void set_genome_inputs(Genome* g, Vector* inputs) {
     }
 }
 
-double* get_genome_outputs(Genome* g) {
-    double* outputs = calloc((size_t)g->outputs->size, sizeof(double));
+void get_genome_outputs(Genome* g, double* outputs) {
     int i;
     Node* node;
     for (i=0; i<g->outputs->size; i++) {
         node = vector_get(g->outputs, i);
         outputs[i] = node->value;
     }
-    return outputs;
 }
 
 void evaluate_genome(Genome* g) {
