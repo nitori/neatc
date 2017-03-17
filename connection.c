@@ -4,18 +4,22 @@
 #include "neat.h"
 
 
-Connection* init_connection(Node* in, Node* out,
-                            double weight, bool enabled) {
+Connection* new_connection(double weight, bool enabled) {
     Connection* c = calloc(1, sizeof(Connection));
     if (c == NULL) {
         return NULL;
     }
-    c->in = in;
-    c->out = out;
+    c->in = NULL;
+    c->out = NULL;
     c->weight = weight;
     c->enabled = enabled;
     c->inumber = next_inumber();
     return c;
+}
+
+void connect(Connection* c, Node* in, Node* out) {
+    c->in = in;
+    c->out = out;
 }
 
 int add_connection(Genome* g, Connection* c) {

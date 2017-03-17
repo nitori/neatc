@@ -15,7 +15,8 @@ struct Connection {
 };
 
 
-Connection* init_connection(Node* in, Node* out, double weight, bool enabled);
+Connection* new_connection(double weight, bool enabled);
+void connect(Connection* c, Node* in, Node* out);
 int add_connection(Genome* g, Connection* c);
 Connection* clone_connection(Connection* c);
 Connection* find_connection(Genome* g, int32_t inumber);

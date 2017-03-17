@@ -52,7 +52,7 @@ void print_nodes(Vector* nodes) {
     }
 }
 
-Genome* init_genome(int32_t input_nodes, int32_t output_nodes) {
+Genome* new_genome(int32_t input_nodes, int32_t output_nodes) {
     Genome* g = calloc(1, sizeof(Genome));
     g->fitness = 0.0;
     g->connections = new_vector();
@@ -178,8 +178,10 @@ int mutate_split_connection(Genome* g) {
 
     Node* node = new_node();
 
-    Connection* c1 = init_connection(c->in, node, 1.0, true);
-    Connection* c2 = init_connection(node, c->out, c->weight, true);
+    Connection* c1 = new_connection(1.0, true);
+    Connection* c2 = new_connection(c->weight, true);
+    connect(c1, c->in, node);
+    connect(c2, node, c->out);
 
     add_connection(g, c1);
     add_connection(g, c2);
@@ -212,14 +214,15 @@ int mutate_connect(Genome* g) {
         node2 = vector_get(g->outputs, out_index - g->hidden->size);
     }
 
-    Connection* c = init_connection(node1, node2, 1.0, true);
+    Connection* c = new_connection(1.0, true);
+    connect(c, node1, node2);
     add_connection(g, c);
 
     return 0;
 }
 
 Genome* mate(Genome* g1, Genome* g2) {
-    Genome* offspring = init_genome(0, 0);
+    Genome* offspring = new_genome(0, 0);
     // TODO: make this work
 
     return offspring;

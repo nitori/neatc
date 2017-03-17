@@ -5,7 +5,7 @@
 int main() {
     srand((unsigned int)time(NULL));
 
-    Genome *g1 = init_genome(3, 1);
+    Genome *g1 = new_genome(3, 1);
 
     mutate_connect(g1);
     mutate_split_connection(g1);
