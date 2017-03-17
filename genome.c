@@ -60,12 +60,17 @@ Genome* new_genome(int32_t input_nodes, int32_t output_nodes) {
     g->outputs = new_vector();
     g->hidden = new_vector();
 
+    Node* node;
     int i;
     for (i=0; i<input_nodes; i++) {
-        vector_append(g->inputs, new_node());
+        node = new_node();
+        node->level = 0;
+        vector_append(g->inputs, node);
     }
     for (i=0; i<output_nodes; i++) {
-        vector_append(g->outputs, new_node());
+        node = new_node();
+        node->level = MAX_HIDDEN_LEVELS + 1;
+        vector_append(g->outputs, node);
     }
     return g;
 }
@@ -162,6 +167,18 @@ Node* find_node_in_vector(Vector* v, int32_t id) {
     return NULL;
 }
 
+Node* get_random_node(Genome* g) {
+    int index = rand() % (g->inputs->size + g->hidden->size + g->outputs->size);
+    if (index < g->inputs->size) {
+        return vector_get(g->inputs, index);
+    }
+    index = index - g->inputs->size;
+    if (index < g->hidden->size) {
+        return vector_get(g->hidden, index);
+    }
+    index = index - g->hidden->size;
+    return vector_get(g->outputs, index);
+}
 
 int mutate_split_connection(Genome* g) {
     if (g->connections->size == 0) {
@@ -169,7 +186,7 @@ int mutate_split_connection(Genome* g) {
     }
     int r = rand() % g->connections->size;
     Connection* c = vector_get(g->connections, r);
-    while (!c->enabled) {
+    while (!c->enabled && (c->out->level - c->in->level) > 1) {
         r = rand() % g->connections->size;
         c = vector_get(g->connections, r);
     }
@@ -177,6 +194,7 @@ int mutate_split_connection(Genome* g) {
     c->enabled = false;
 
     Node* node = new_node();
+    node->level = (rand() % (c->out->level - (c->in->level+1))) + c->in->level + 1;
 
     Connection* c1 = new_connection(1.0, true);
     Connection* c2 = new_connection(c->weight, true);
@@ -191,28 +209,13 @@ int mutate_split_connection(Genome* g) {
 }
 
 int mutate_connect(Genome* g) {
-    // connect either
-    // input -> output
-    // input -> hidden
-    // hidden -> output
-    // hidden -> hidden
+    Node* node1;
+    Node* node2;
 
-    int in_index = rand() % (g->inputs->size + g->hidden->size);
-    int out_index = rand() % (g->hidden->size + g->outputs->size);
-
-    Node *node1;
-    Node *node2;
-
-    if (in_index < g->inputs->size) {
-        node1 = vector_get(g->inputs, in_index);
-    } else {
-        node1 = vector_get(g->hidden, in_index - g->inputs->size);
-    }
-    if (out_index < g->hidden->size) {
-        node2 = vector_get(g->hidden, out_index);
-    } else {
-        node2 = vector_get(g->outputs, out_index - g->hidden->size);
-    }
+    do {
+        node1 = get_random_node(g);
+        node2 = get_random_node(g);
+    } while(node1->level >= node2->level);
 
     Connection* c = new_connection(1.0, true);
     connect(c, node1, node2);
@@ -299,7 +302,7 @@ void write_nodes(FILE *f, const char* name, Vector* nodes) {
         if (i > 0) {
             fprintf(f, ", ");
         }
-        fprintf(f, "%d", node->id);
+        fprintf(f, "%d [%d]", node->id, node->level);
     }
     fprintf(f, "\n");
 }

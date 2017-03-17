@@ -26,6 +26,7 @@ Genome* clone_genome(Genome* g);
 
 Node* find_node_in_genome(Genome* g, int32_t id);
 Node* find_node_in_vector(Vector* v, int32_t id);
+Node* get_random_node(Genome* g);
 
 int mutate_split_connection(Genome* g);
 int mutate_connect(Genome* g);

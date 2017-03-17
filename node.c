@@ -8,8 +8,10 @@ Node* new_node() {
     static int32_t global_node_counter = 0;
     global_node_counter++;
     Node* n = calloc(1, sizeof(Node));
-    n->outputs = new_vector();
     n->id = global_node_counter;
+    n->level = (rand() % MAX_HIDDEN_LEVELS) + 1;
+    // inputs = 0
+    // outputs = MAX_HIDDEN_LEVELS + 1
     return n;
 }
 
@@ -21,7 +23,6 @@ Node* clone_node(Node* node) {
 
 void free_node(Node* node) {
     free(node);
-    vector_free(node->outputs);
 }
 
 void free_nodes(Vector* v) {

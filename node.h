@@ -5,10 +5,12 @@
 #ifndef NEAT_NODE_H
 #define NEAT_NODE_H
 
+#define MAX_HIDDEN_LEVELS 1000
+
 struct Node {
     int32_t id;
     double value;
-    Vector* outputs;
+    int32_t level;
 };
 
 Node* new_node();
