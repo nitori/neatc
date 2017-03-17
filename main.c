@@ -12,14 +12,12 @@ int main(int argc, char** argv) {
     srand((unsigned int)time(NULL));
 
     Population* pop = new_population();
-    Species* species = new_species();
-    add_species(pop, species);
 
     Genome* base_genome = new_genome(INPUT_COUNT, OUTPUT_COUNT);
     Genome* clone;
     for (i=0; i<INITIAL_GENOMES; i++) {
         clone = clone_genome(base_genome);
-        add_genome(species, clone);
+        add_genome(pop, clone);
     }
 
     run_generation(pop);

@@ -7,13 +7,11 @@
 
 
 struct Species {
-    Vector* genomes;
-    double fitness;
+    Genome* base_genome;
 };
 
 
 Species* new_species();
-int add_genome(Species* s, Genome* g);
 void free_species(Species* s);
 
 #endif //NEAT_SPECIES_H
