@@ -31,11 +31,7 @@ typedef struct DeltaResult DeltaResult;
 #include "connection.h"
 #include "genome.h"
 #include "species.h"
-
-
-struct Population {
-    Vector* species;
-};
+#include "population.h"
 
 
 struct DeltaResult {
@@ -49,5 +45,6 @@ struct DeltaResult {
 
 
 int32_t next_inumber();
+void run_generation(Population* pop);
 
 #endif //NEAT_NEAT_H

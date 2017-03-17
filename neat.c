@@ -9,4 +9,6 @@ int32_t next_inumber() {
     return global_inumber;
 }
 
+void run_generation(Population* pop) {
 
+}
