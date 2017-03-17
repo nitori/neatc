@@ -77,10 +77,13 @@ def render(data):
     for connection in connections:
         node_in = node_map[connection.node_in]
         node_out = node_map[connection.node_out]
-        draw.line([node_in.center, node_out.center], fill=(0, 0, 0), width=3)
+        draw.line([node_in.center, node_out.center], fill=(255, 0, 0), width=1)
 
-    im.show()
+    return im
 
 if __name__ == '__main__':
-    data = read_data(sys.argv[1])
-    render(data)
+    filename = sys.argv[1]
+    data = read_data(filename)
+    im = render(data)
+    filenamebase, ext = filename.rsplit('.', 1)
+    im.save(f'{filenamebase}.png')
