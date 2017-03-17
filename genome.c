@@ -11,20 +11,43 @@ int print_genome(Genome* g) {
 
     Connection* current = g->head;
     while (current) {
-        printf("    Connection(%s, in=%d, out=%d, inumber=%d, weight=%f)\n",
-               current->enabled ? "ON" : "OFF",
-               current->in,
-               current->out,
+        printf("    Connection(%s, in=(%d, %f, %p), out=(%d, %f, %p), inumber=%d, weight=%f)\n",
+               current->enabled ? " ON" : "OFF",
+               current->in->id, current->in->value, current->in,
+               current->out->id, current->out->value, current->out,
                current->inumber,
                current->weight);
         current = current->next;
     }
 
-    printf("  Number of input nodes: %d\n", g->input_count);
-    printf("  Number of output nodes: %d\n", g->output_count);
-    printf("  Number of hidden nodes: %d\n", g->hidden_count);
+    printf("  Nodes:\n");
+
+    printf("    Inputs (%d): ", g->inputs->size);
+    print_nodes(g->inputs);
+    printf("\n");
+
+    printf("    Hidden (%d): ", g->hidden->size);
+    print_nodes(g->hidden);
+    printf("\n");
+
+    printf("    Outputs (%d): ", g->outputs->size);
+    print_nodes(g->outputs);
+    printf("\n");
+
     printf(")\n");
     return 0;
+}
+
+void print_nodes(Vector* nodes) {
+    int i;
+    Node* node;
+    for (i=0; i < nodes->size; i++) {
+        node = vector_get(nodes, i);
+        if (i > 0) {
+            printf(", ");
+        }
+        printf("%d [%p]", node->id, node);
+    }
 }
 
 Genome* init_genome(int32_t input_nodes, int32_t output_nodes) {
@@ -33,9 +56,17 @@ Genome* init_genome(int32_t input_nodes, int32_t output_nodes) {
     g->fitness = 0.0;
     g->head = NULL;
     g->tail = NULL;
-    g->input_count = input_nodes;
-    g->output_count = output_nodes;
-    g->hidden_count = 0;
+    g->inputs = new_vector();
+    g->outputs = new_vector();
+    g->hidden = new_vector();
+
+    int i;
+    for (i=0; i<input_nodes; i++) {
+        vector_append(g->inputs, new_node());
+    }
+    for (i=0; i<output_nodes; i++) {
+        vector_append(g->outputs, new_node());
+    }
     return g;
 }
 
@@ -96,15 +127,62 @@ Genome* clone_genome(Genome* g) {
     clone->tail = NULL;
     clone->conn_count = 0;
 
+    clone->inputs = new_vector();
+    clone->hidden = new_vector();
+    clone->outputs = new_vector();
+    int i;
+    for (i=0; i<g->inputs->size; i++) {
+        vector_append(clone->inputs, clone_node(vector_get(g->inputs, i)));
+    }
+    for (i=0; i<g->hidden->size; i++) {
+        vector_append(clone->hidden, clone_node(vector_get(g->hidden, i)));
+    }
+    for (i=0; i<g->outputs->size; i++) {
+        vector_append(clone->outputs, clone_node(vector_get(g->outputs, i)));
+    }
+
     Connection* current = g->head;
     Connection* c;
     while (current) {
         c = clone_connection(current);
+        c->in = find_node_in_genome(clone, c->in->id);
+        c->out = find_node_in_genome(clone, c->out->id);
         add_connection(clone, c);
         current = current->next;
     }
+
     return clone;
 }
+
+Node* find_node_in_genome(Genome* g, int32_t id) {
+    Node* node;
+    node = find_node_in_vector(g->inputs, id);
+    if (node != NULL) {
+        return node;
+    }
+    node = find_node_in_vector(g->hidden, id);
+    if (node != NULL) {
+        return node;
+    }
+    node = find_node_in_vector(g->outputs, id);
+    if (node != NULL) {
+        return node;
+    }
+    return NULL;
+}
+
+Node* find_node_in_vector(Vector* v, int32_t id) {
+    int i;
+    Node* node;
+    for (i=0; i<v->size; i++) {
+        node = vector_get(v, i);
+        if (node->id == id) {
+            return node;
+        }
+    }
+    return NULL;
+}
+
 
 int mutate_split_connection(Genome* g) {
     int r = rand() % g->conn_count;
@@ -115,12 +193,16 @@ int mutate_split_connection(Genome* g) {
     }
 
     c->enabled = false;
-    int32_t new_node = g->input_count + g->output_count + g->hidden_count;
-    Connection* c1 = init_connection(c->in, new_node, 1.0, true);
-    Connection* c2 = init_connection(new_node, c->out, c->weight, true);
+
+    Node* node = new_node();
+
+    Connection* c1 = init_connection(c->in, node, 1.0, true);
+    Connection* c2 = init_connection(node, c->out, c->weight, true);
+
     add_connection(g, c1);
     add_connection(g, c2);
-    g->hidden_count++;
+    vector_append(g->hidden, node);
+
     return 0;
 }
 
@@ -130,43 +212,49 @@ int mutate_connect(Genome* g) {
     // input -> hidden
     // hidden -> output
     // hidden -> hidden
-    int32_t node1 = rand() % (g->input_count + g->hidden_count);
-    int32_t node2 = (rand() % (g->hidden_count + g->output_count)) + g->input_count;
 
-    Connection* c = init_connection(node1, node2, (double)rand() / (double)RAND_MAX, true);
+    int in_index = rand() % (g->inputs->size + g->hidden->size);
+    int out_index = rand() % (g->hidden->size + g->outputs->size);
+
+    Node *node1;
+    Node *node2;
+
+    if (in_index < g->inputs->size) {
+        node1 = vector_get(g->inputs, in_index);
+    } else {
+        node1 = vector_get(g->hidden, in_index - g->inputs->size);
+    }
+    if (out_index < g->hidden->size) {
+        node2 = vector_get(g->hidden, out_index);
+    } else {
+        node2 = vector_get(g->outputs, out_index - g->hidden->size);
+    }
+
+    Connection* c = init_connection(node1, node2, 1.0, true);
     add_connection(g, c);
 
     return 0;
 }
 
 Genome* mate(Genome* g1, Genome* g2) {
-    Genome* offspring = init_genome(g1->input_count, g1->output_count);
-    Connection* c1 = g1->head;
-    Connection* c2 = g2->head;
-    Connection* tmpc;
+    Genome* offspring = init_genome(0, 0);
+    // TODO: make this work
 
-    while (c1 && c2) {
-        if (c1->inumber < c2->inumber) {
-            tmpc = clone_connection(c1);
-            c1 = c1->next;
-        } else if (c2->inumber < c1->inumber) {
-            tmpc = clone_connection(c2);
-            c2 = c2->next;
-        } else {
-            if (g1->fitness > g2->fitness) {
-                tmpc = clone_connection(c1);
-            } else {
-                tmpc = clone_connection(c2);
-            }
-            c1 = c1->next;
-            c2 = c2->next;
-        }
-        add_connection(offspring, tmpc);
-    }
-    Connection* rest = c1 != NULL ? c1 : c2;
-    while (rest) {
-        add_connection(offspring, clone_connection(rest));
-        rest = rest->next;
-    }
     return offspring;
+}
+
+void free_genome(Genome* g) {
+    Connection* current = g->head;
+    while (current) {
+        free_connection(current);
+        current = current->next;
+    }
+    int i;
+    free_nodes(g->inputs);
+    free_nodes(g->hidden);
+    free_nodes(g->outputs);
+    vector_free(g->inputs);
+    vector_free(g->hidden);
+    vector_free(g->outputs);
+    free(g);
 }

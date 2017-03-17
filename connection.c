@@ -4,7 +4,7 @@
 #include "neat.h"
 
 
-Connection* init_connection(int32_t in, int32_t out,
+Connection* init_connection(Node* in, Node* out,
                             double weight, bool enabled) {
     Connection* c = calloc(1, sizeof(Connection));
     if (c == NULL) {
@@ -73,4 +73,8 @@ Connection* find_connection(Genome* g, int32_t inumber) {
         current = current->next;
     }
     return NULL;
+}
+
+void free_connection(Connection* c) {
+    free(c);
 }

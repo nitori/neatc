@@ -20,6 +20,7 @@ struct Vector {
     void** data;
 };
 
+Vector* new_vector();
 void vector_init(Vector* v);
 void vector_append(Vector* v, void* item);
 void vector_set(Vector* v, int32_t index, void* item);

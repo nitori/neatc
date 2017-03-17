@@ -4,6 +4,12 @@
 
 #include "vector.h"
 
+Vector* new_vector() {
+    Vector* v = calloc(1, sizeof(Vector));
+    vector_init(v);
+    return v;
+}
+
 void vector_init(Vector* v) {
     v->capacity = VECTOR_INITIAL_CAPACITY;
     v->size = 0;

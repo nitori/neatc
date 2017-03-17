@@ -6,8 +6,8 @@
 #define NEAT_CONNECTION_H
 
 struct Connection {
-    int32_t in;
-    int32_t out;
+    Node* in;
+    Node* out;
     double weight;
     bool enabled;
     int32_t inumber;  // innovation number
@@ -19,10 +19,11 @@ struct Connection {
 };
 
 
-Connection* init_connection(int32_t in, int32_t out, double weight, bool enabled);
+Connection* init_connection(Node* in, Node* out, double weight, bool enabled);
 int add_connection(Genome* g, Connection* c);
 Connection* clone_connection(Connection* c);
 Connection* find_connection(Genome* g, int32_t inumber);
 Connection* get_connection(Genome* g, int32_t index);
+void free_connection(Connection* c);
 
 #endif //NEAT_CONNECTION_H

@@ -20,12 +20,14 @@ typedef uint8_t bool;
 
 #include "vector.h"
 
+typedef struct Node Node;
 typedef struct Connection Connection;
 typedef struct Genome Genome;
 typedef struct Species Species;
 typedef struct Population Population;
 typedef struct DeltaResult DeltaResult;
 
+#include "node.h"
 #include "connection.h"
 #include "genome.h"
 
