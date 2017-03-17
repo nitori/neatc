@@ -64,13 +64,19 @@ def render(data):
     node_map = {}
     middle_x = (boxw*max_width) / 2
     for y_base, nodes in enumerate(node_levels):
+        if y_base == 0:
+            color = (0, 255, 0)
+        elif y_base == len(node_levels) - 1:
+            color = (0, 0, 255)
+        else:
+            color = (0, 0, 0)
         y = (y_base * boxh) + boxh/2
         for x_relbase, node in enumerate(nodes):
             x_rel = -((boxw/2) * len(nodes))
             x_base = x_rel + boxw * x_relbase
             x = x_base + boxw/2
             x += middle_x
-            draw.ellipse([x-r, y-r, x+r, y+r], fill=(0, 0, 0))
+            draw.ellipse([x-r, y-r, x+r, y+r], fill=color)
             nodes[x_relbase] = Node(node.id, node.level, Point(x, y))
             node_map[node.id] = nodes[x_relbase]
 
