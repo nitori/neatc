@@ -10,7 +10,9 @@
 struct Node {
     int32_t id;
     double value;
+    int32_t input_count;
     int32_t level;
+    bool evaluated;
 };
 
 Node* new_node();

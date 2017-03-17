@@ -26,5 +26,18 @@ int main(int argc, char** argv) {
 
     save_genome(g1, "genome.txt");
 
+    Vector* inputs = new_vector();
+    double a = 1.0;
+    double b = 50.0;
+    double c = -30.0;
+    vector_append(inputs, &a);
+    vector_append(inputs, &b);
+    vector_append(inputs, &b);
+
+    set_genome_inputs(g1, inputs);
+    evaluate_genome(g1);
+
+    print_genome(g1);
+
     return 0;
 }

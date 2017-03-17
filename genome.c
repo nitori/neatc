@@ -231,12 +231,29 @@ Genome* mate(Genome* g1, Genome* g2) {
     return offspring;
 }
 
+void _reset_nodes(Vector* nodes) {
+    int i;
+    Node* node;
+    for (i=0; i<nodes->size; i++) {
+        node = vector_get(nodes, i);
+        node->input_count = 0;
+        node->value = 0.0;
+        node->evaluated = false;
+    }
+}
+
+void reset_genome(Genome* g) {
+    _reset_nodes(g->inputs);
+    _reset_nodes(g->hidden);
+    _reset_nodes(g->outputs);
+}
+
 void set_genome_inputs(Genome* g, Vector* inputs) {
     if (g->inputs->size != inputs->size) {
         fprintf(stderr, "Genome inputs vector and supplied inputs are not of same size.\n");
         exit(-1);
     }
-
+    reset_genome(g);
     int i;
     double* value;
     Node* node;
@@ -244,11 +261,28 @@ void set_genome_inputs(Genome* g, Vector* inputs) {
         node = vector_get(g->inputs, i);
         value = vector_get(inputs, i);
         node->value = *value;
+        node->input_count = 1;
+        node->evaluated = true;
     }
 }
 
 void evaluate_genome(Genome* g) {
-
+    int level;
+    int i;
+    Connection* c;
+    for (level=0; level<=MAX_HIDDEN_LEVELS+1; level++) {
+        for (i=0; i<g->connections->size; i++) {
+            c = vector_get(g->connections, i);
+            if (c->in->level == level) {
+                if (!c->in->evaluated) {
+                    c->in->value = c->in->value / (double)c->in->input_count;
+                    c->in->evaluated = true;
+                }
+                c->out->value += (c->in->value * c->weight);
+                c->out->input_count++;
+            }
+        }
+    }
 }
 
 void free_genome(Genome* g) {

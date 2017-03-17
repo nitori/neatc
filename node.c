@@ -10,6 +10,8 @@ Node* new_node() {
     Node* n = calloc(1, sizeof(Node));
     n->id = global_node_counter;
     n->level = (rand() % MAX_HIDDEN_LEVELS) + 1;
+    n->input_count = 0; // set on evaluation
+    n->evaluated = false;
     // inputs = 0
     // outputs = MAX_HIDDEN_LEVELS + 1
     return n;
