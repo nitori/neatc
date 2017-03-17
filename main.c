@@ -70,5 +70,22 @@ int main(int argc, char** argv) {
     printf("\n");
     printf("Fitness of this Genome: %f\n", g1->fitness);
 
+    Genome* g2 = clone_genome(g1);
+
+    for (i=0; i<sqrt(mutation_count); i++) {
+        mutate_split_connection(g2);
+    }
+
+    print_genome(g1);
+    print_genome(g2);
+
+    DeltaResult r;
+    delta_genomes(&r, g1, g2, 1.0, 1.0, 1.0);
+
+    printf("Disjoint: %d\n", r.disjoint_count);
+    printf("Excess: %d\n", r.excess_count);
+    printf("Weight diff: %f\n", r.avg_weight_diff);
+    printf("Delta: %f\n", r.delta);
+
     return 0;
 }

@@ -75,7 +75,7 @@ Genome* new_genome(int32_t input_nodes, int32_t output_nodes) {
     return g;
 }
 
-void delta_genomes(DeltaResult* result, Genome* g1, Genome* g2, double coeff_d, double coeff_w) {
+void delta_genomes(DeltaResult* result, Genome* g1, Genome* g2, double coeff_d, double coeff_e, double coeff_w) {
     if (g1->connections->size == 0 || g2->connections->size == 0) {
         fprintf(stderr, "Genomes have to be non-empty to calculate delta.\n");
         return;
@@ -101,11 +101,17 @@ void delta_genomes(DeltaResult* result, Genome* g1, Genome* g2, double coeff_d, 
             n2++;
         }
     }
+    if (n1 < g1->connections->size) {
+        result->excess_count = g1->connections->size - n1;
+    } else {
+        result->excess_count = g2->connections->size - n2;
+    }
 
+    result->excess = (coeff_e * (double)result->excess_count) / (double)max_count;
     result->disjoint_count = disjoint_count;
     result->disjoint = (coeff_d * (double)disjoint_count) / (double)max_count;
     result->avg_weight_diff = coeff_w * (weight_diff / (double)max_count);
-    result->delta = result->disjoint + result->avg_weight_diff;
+    result->delta = result->disjoint + result->excess + result->avg_weight_diff;
 }
 
 Genome* clone_genome(Genome* g) {
