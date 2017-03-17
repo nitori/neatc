@@ -339,7 +339,6 @@ double calculate_simple_fitness(double* outputs, double* desired, size_t size) {
     }
     variance /= size;
     pstdev = sqrt(variance);
-    printf("%f %f\n", mean_delta, pstdev);
     return mean_delta * pstdev;
 }
 
