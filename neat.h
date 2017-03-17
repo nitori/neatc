@@ -30,12 +30,7 @@ typedef struct DeltaResult DeltaResult;
 #include "node.h"
 #include "connection.h"
 #include "genome.h"
-
-
-struct Species {
-    Vector* genomes;
-    double fitness;
-};
+#include "species.h"
 
 
 struct Population {

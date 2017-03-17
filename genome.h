@@ -14,6 +14,8 @@ struct Genome {
     Vector* inputs;
     Vector* outputs;
     Vector* hidden;
+
+    Species* owner;
 };
 
 

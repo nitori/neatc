@@ -59,6 +59,7 @@ Genome* new_genome(int32_t input_nodes, int32_t output_nodes) {
     g->inputs = new_vector();
     g->outputs = new_vector();
     g->hidden = new_vector();
+    g->owner = NULL;
 
     Node* node;
     int i;
