@@ -186,7 +186,7 @@ int mutate_split_connection(Genome* g) {
     }
     int r = rand() % g->connections->size;
     Connection* c = vector_get(g->connections, r);
-    while (!c->enabled && (c->out->level - c->in->level) > 1) {
+    while (!c->enabled || (c->out->level - c->in->level) <= 1) {
         r = rand() % g->connections->size;
         c = vector_get(g->connections, r);
     }
