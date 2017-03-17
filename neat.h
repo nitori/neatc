@@ -49,8 +49,6 @@ struct DeltaResult {
     double delta;
     int32_t disjoint_count;
     double disjoint;
-    int32_t excess_count;
-    double excess;
     double avg_weight_diff;
 };
 

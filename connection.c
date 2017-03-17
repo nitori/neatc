@@ -24,35 +24,8 @@ int add_connection(Genome* g, Connection* c) {
         return -1;
     }
     c->owner = g;
-    if (g->tail == NULL) {
-        g->tail = c;
-        g->head = c;
-        c->next = NULL;
-        c->prev = NULL;
-    } else {
-        c->next = NULL;
-        c->prev = g->tail;
-        g->tail->next = c;
-        g->tail = c;
-    }
-    g->conn_count++;
+    vector_append(g->connections, c);
     return 0;
-}
-
-Connection* get_connection(Genome* g, int32_t index) {
-    if (index >= g->conn_count) {
-        return NULL;
-    }
-    Connection* current = g->head;
-    int i = 0;
-    while (current) {
-        if (index == i) {
-            return current;
-        }
-        i++;
-        current = current->next;
-    }
-    return NULL;
 }
 
 Connection* clone_connection(Connection* c) {
@@ -63,14 +36,15 @@ Connection* clone_connection(Connection* c) {
 }
 
 Connection* find_connection(Genome* g, int32_t inumber) {
-    Connection* current = g->head;
-    while (current) {
+    Connection* current;
+    int i;
+    for (i=0; i<g->connections->size; i++) {
+        current = vector_get(g->connections, i);
         if (current->inumber == inumber) {
             return current;
         } else if (current->inumber > inumber) {
             return NULL;
         }
-        current = current->next;
     }
     return NULL;
 }

@@ -6,18 +6,20 @@
 
 int print_genome(Genome* g) {
     printf("Genome(\n");
-    printf("  Number of connections: %d\n", g->conn_count);
+    printf("  Number of connections: %d\n", g->connections->size);
     printf("  Connections:\n");
 
-    Connection* current = g->head;
-    while (current) {
-        printf("    Connection(%s, in=(%d, %f, %p), out=(%d, %f, %p), inumber=%d, weight=%f)\n",
+    int i;
+    Connection* current;
+    for (i=0; i<g->connections->size; i++) {
+        current = vector_get(g->connections, i);
+        printf("    Connection(%s, [%p], in=(%d, %f, [%p]), out=(%d, %f, %p), inumber=%d, weight=%f)\n",
                current->enabled ? " ON" : "OFF",
+               current,
                current->in->id, current->in->value, current->in,
                current->out->id, current->out->value, current->out,
                current->inumber,
                current->weight);
-        current = current->next;
     }
 
     printf("  Nodes:\n");
@@ -52,10 +54,8 @@ void print_nodes(Vector* nodes) {
 
 Genome* init_genome(int32_t input_nodes, int32_t output_nodes) {
     Genome* g = calloc(1, sizeof(Genome));
-    g->conn_count = 0;
     g->fitness = 0.0;
-    g->head = NULL;
-    g->tail = NULL;
+    g->connections = new_vector();
     g->inputs = new_vector();
     g->outputs = new_vector();
     g->hidden = new_vector();
@@ -70,63 +70,44 @@ Genome* init_genome(int32_t input_nodes, int32_t output_nodes) {
     return g;
 }
 
-DeltaResult* delta_genomes(Genome* g1, Genome* g2, double coeff_d, double coeff_e, double coeff_w) {
-    Connection* cmin1 = g1->head;
-    Connection* cmin2 = g2->head;
-    Connection* cmin = cmin2->inumber < cmin1->inumber ? cmin2 : cmin1;
-
-    Connection* cmax1 = g1->tail;
-    Connection* cmax2 = g2->tail;
-    Connection* cmax = cmax2->inumber > cmax1->inumber ? cmax2 : cmax1;
-
-    int32_t max_count = g1->conn_count > g2->conn_count ? g1->conn_count : g2->conn_count;
+void delta_genomes(DeltaResult* result, Genome* g1, Genome* g2, double coeff_d, double coeff_w) {
+    if (g1->connections->size == 0 || g2->connections->size == 0) {
+        fprintf(stderr, "Genomes have to be non-empty to calculate delta.\n");
+        return;
+    }
+    int32_t max_count = g1->connections->size > g2->connections->size ? g1->connections->size : g2->connections->size;
     double weight_diff = 0.0;
     int32_t disjoint_count = 0;
-    int32_t excess_count = 0;
 
-    Connection *c1, *c2;
-    int i;
+    int n1 = 0, n2 = 0;
 
-    for (i=cmin->inumber; i<=cmax->inumber; i++) {
-        c1 = find_connection(g1, i);
-        c2 = find_connection(g2, i);
-        if (c1 != NULL && c2 != NULL) {
-            weight_diff += fabs(c1->weight - c2->weight);
-        } else if(c1 == NULL && c2 == NULL) {
-            continue;
-        } else if(c1 == NULL) {
-            if (c2->inumber > cmax1->inumber || c2->inumber < cmin1->inumber) {
-                excess_count++;
-            } else {
-                disjoint_count++;
-            }
+    while (n1 < g1->connections->size && n2 < g2->connections->size) {
+        Connection* c1 = vector_get(g1->connections, n1);
+        Connection* c2 = vector_get(g2->connections, n2);
+        if (c1->inumber < c2->inumber) {
+            disjoint_count++;
+            n1++;
+        } else if (c2->inumber < c1->inumber) {
+            disjoint_count++;
+            n2++;
         } else {
-            if (c1->inumber > cmax2->inumber || c1->inumber < cmin2->inumber) {
-                excess_count++;
-            } else {
-                disjoint_count++;
-            }
+            weight_diff += fabs(c1->weight - c2->weight);
+            n1++;
+            n2++;
         }
     }
 
-    DeltaResult* result = calloc(1, sizeof(DeltaResult));
     result->disjoint_count = disjoint_count;
     result->disjoint = (coeff_d * (double)disjoint_count) / (double)max_count;
-    result->excess_count = excess_count;
-    result->excess = (coeff_e * (double)excess_count) / (double)max_count;
     result->avg_weight_diff = coeff_w * (weight_diff / (double)max_count);
-    result->delta = result->disjoint + result->excess + result->avg_weight_diff;
-    return result;
+    result->delta = result->disjoint + result->avg_weight_diff;
 }
 
 Genome* clone_genome(Genome* g) {
     Genome* clone = calloc(1, sizeof(*g));
     memcpy(clone, g, sizeof(*g));
 
-    clone->head = NULL;
-    clone->tail = NULL;
-    clone->conn_count = 0;
-
+    clone->connections = new_vector();
     clone->inputs = new_vector();
     clone->hidden = new_vector();
     clone->outputs = new_vector();
@@ -141,14 +122,12 @@ Genome* clone_genome(Genome* g) {
         vector_append(clone->outputs, clone_node(vector_get(g->outputs, i)));
     }
 
-    Connection* current = g->head;
-    Connection* c;
-    while (current) {
-        c = clone_connection(current);
-        c->in = find_node_in_genome(clone, c->in->id);
-        c->out = find_node_in_genome(clone, c->out->id);
-        add_connection(clone, c);
-        current = current->next;
+    Connection* conn_clone;
+    for (i=0; i<g->connections->size; i++) {
+        conn_clone = clone_connection(vector_get(g->connections, i));
+        conn_clone->in = find_node_in_genome(clone, conn_clone->in->id);
+        conn_clone->out = find_node_in_genome(clone, conn_clone->out->id);
+        add_connection(clone, conn_clone);
     }
 
     return clone;
@@ -185,14 +164,14 @@ Node* find_node_in_vector(Vector* v, int32_t id) {
 
 
 int mutate_split_connection(Genome* g) {
-    if (g->conn_count == 0) {
+    if (g->connections->size == 0) {
         return -1;
     }
-    int r = rand() % g->conn_count;
-    Connection* c = get_connection(g, r);
+    int r = rand() % g->connections->size;
+    Connection* c = vector_get(g->connections, r);
     while (!c->enabled) {
-        r = rand() % g->conn_count;
-        c = get_connection(g, r);
+        r = rand() % g->connections->size;
+        c = vector_get(g->connections, r);
     }
 
     c->enabled = false;
@@ -247,12 +226,11 @@ Genome* mate(Genome* g1, Genome* g2) {
 }
 
 void free_genome(Genome* g) {
-    Connection* current = g->head;
-    while (current) {
-        free_connection(current);
-        current = current->next;
-    }
     int i;
+    for (i=0; i<g->connections->size; i++) {
+        free_connection(vector_get(g->connections, i));
+    }
+    vector_free(g->connections);
     free_nodes(g->inputs);
     free_nodes(g->hidden);
     free_nodes(g->outputs);

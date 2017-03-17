@@ -6,10 +6,9 @@
 #define NEAT_GENOME_H
 
 struct Genome {
-    Connection* head;
-    Connection* tail;
-    int32_t conn_count;
     double fitness;
+
+    Vector* connections;
 
     // nodes
     Vector* inputs;
@@ -21,7 +20,7 @@ struct Genome {
 int print_genome(Genome* g);
 void print_nodes(Vector* nodes);
 Genome* init_genome(int32_t input_nodes, int32_t output_nodes);
-DeltaResult* delta_genomes(Genome* g1, Genome* g2, double coeff_d, double coeff_e, double coeff_w);
+void delta_genomes(DeltaResult* r, Genome* g1, Genome* g2, double coeff_d, double coeff_w);
 Genome* mate(Genome* g1, Genome* g2);
 Genome* clone_genome(Genome* g);
 
