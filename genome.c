@@ -95,10 +95,11 @@ void delta_genomes(DeltaResult* result, Genome* g1, Genome* g2, double coeff_d, 
     int32_t disjoint_count = 0;
 
     int n1 = 0, n2 = 0;
-
+    Connection* c1;
+    Connection* c2;
     while (n1 < g1->connections->size && n2 < g2->connections->size) {
-        Connection* c1 = vector_get(g1->connections, n1);
-        Connection* c2 = vector_get(g2->connections, n2);
+        c1 = vector_get(g1->connections, n1);
+        c2 = vector_get(g2->connections, n2);
         if (c1->inumber < c2->inumber) {
             disjoint_count++;
             n1++;
@@ -250,7 +251,58 @@ int mutate_weight(Genome* g) {
 
 Genome* mate(Genome* g1, Genome* g2) {
     Genome* offspring = new_genome(0, 0);
-    // TODO: make this work
+    Connection* c1;
+    Connection* c2;
+    Connection* new_c;
+    Node* node_in;
+    Node* node_out;
+    int n1 = 0, n2 = 0;
+
+    offspring->inputs = clone_nodes(g1->inputs);
+    offspring->outputs = clone_nodes(g1->outputs);
+
+    while (n1 < g1->connections->size || n2 < g2->connections->size) {
+        if (n1 < g1->connections->size && n2 < g2->connections->size) {
+            c1 = vector_get(g1->connections, n1);
+            c2 = vector_get(g2->connections, n2);
+            if (c1->inumber < c2->inumber) {
+                // not in c2
+                new_c = clone_connection(c1);
+                n1++;
+            } else if (c2->inumber < c1->inumber) {
+                // not in c1
+                new_c = clone_connection(c2);
+                n2++;
+            } else {
+                if (g1->fitness < g2->fitness) {
+                    new_c = clone_connection(c1);
+                } else {
+                    new_c = clone_connection(c2);
+                }
+                n1++;
+                n2++;
+            }
+        } else if (n1 < g1->connections->size) {
+            c1 = vector_get(g1->connections, n1);
+            new_c = clone_connection(c1);
+            n1++;
+        } else {
+            c2 = vector_get(g2->connections, n2);
+            new_c = clone_connection(c2);
+            n2++;
+        }
+        node_in = find_node_in_genome(offspring, new_c->in->id);
+        node_out = find_node_in_genome(offspring, new_c->out->id);
+        if (node_in == NULL) {
+            node_in = clone_node(new_c->in);
+        }
+        if (node_out == NULL) {
+            node_out = clone_node(new_c->out);
+        }
+        new_c->in = node_in;
+        new_c->out = node_out;
+        add_connection(offspring, new_c);
+    }
 
     return offspring;
 }

@@ -29,8 +29,12 @@ void vector_set(Vector* v, int32_t index, void* item) {
     v->data[index] = item;
 }
 
+int vector_has(Vector* v, int32_t index) {
+    return index >= 0 && index < v->size;
+}
+
 void* vector_get(Vector* v, int32_t index) {
-    if (index >= v->size || index < 0) {
+    if (!vector_has(v, index)) {
         fprintf(stderr, "Index %d out of bounds for vector of size %d\n", index, v->size);
         return NULL;
     }

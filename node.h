@@ -17,6 +17,7 @@ struct Node {
 
 Node* new_node();
 Node* clone_node(Node* node);
+Vector* clone_nodes(Vector* nodes);
 void free_node(Node* node);
 void free_nodes(Vector* v);
 

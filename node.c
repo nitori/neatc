@@ -23,6 +23,17 @@ Node* clone_node(Node* node) {
     return new_n;
 }
 
+Vector* clone_nodes(Vector* nodes) {
+    int i;
+    Node* node;
+    Vector* v_clone = new_vector();
+    for (i=0; i<nodes->size; i++) {
+        node = vector_get(nodes, i);
+        vector_append(v_clone, clone_node(node));
+    }
+    return v_clone;
+}
+
 void free_node(Node* node) {
     free(node);
 }
