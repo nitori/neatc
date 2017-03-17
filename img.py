@@ -83,7 +83,11 @@ def render(data):
     for connection in connections:
         node_in = node_map[connection.node_in]
         node_out = node_map[connection.node_out]
-        draw.line([node_in.center, node_out.center], fill=(255, 0, 0), width=1)
+        if connection.enabled:
+            color = (255, 0, 0)
+        else:
+            color = (200, 200, 200)
+        draw.line([node_in.center, node_out.center], fill=color, width=1)
 
     return im
 
