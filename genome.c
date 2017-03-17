@@ -273,11 +273,15 @@ void set_genome_inputs(Genome* g, Vector* inputs) {
     }
 }
 
-void get_genome_outputs(Genome* g, Vector* outputs) {
+double* get_genome_outputs(Genome* g) {
+    double* outputs = calloc((size_t)g->outputs->size, sizeof(double));
     int i;
+    Node* node;
     for (i=0; i<g->outputs->size; i++) {
-        vector_set(outputs, i, vector_get(g->outputs, i));
+        node = vector_get(g->outputs, i);
+        outputs[i] = node->value;
     }
+    return outputs;
 }
 
 void evaluate_genome(Genome* g) {
@@ -314,6 +318,31 @@ void evaluate_genome(Genome* g) {
             node->value = 0.0;
         }
     }
+}
+
+double calculate_simple_fitness(double* outputs, double* desired, size_t size) {
+
+    double delta[size];
+    double deviations[size];
+    double mean_delta = 0.0;
+    double variance = 0.0;
+    double pstdev;
+    int i;
+
+    for (i=0; i<size; i++) {
+        delta[i] = fabs(outputs[i] - desired[i]);
+        mean_delta += delta[i];
+    }
+    mean_delta /= size;
+
+    for (i=0; i<size; i++) {
+        deviations[i] = pow(delta[i] - mean_delta, 2.0);
+        variance += deviations[i];
+    }
+    variance /= size;
+    pstdev = sqrt(variance);
+    printf("%f %f\n", mean_delta, pstdev);
+    return mean_delta * pstdev;
 }
 
 void free_genome(Genome* g) {

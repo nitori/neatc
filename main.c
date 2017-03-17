@@ -54,17 +54,20 @@ int main(int argc, char** argv) {
     printf("    New nodes (split): %d\n", count_splits);
     printf("    Weight changes:    %d\n", count_weight);
 
-    Vector outputs;
-    vector_init(&outputs);
-    get_genome_outputs(g1, &outputs);
+    double desired[] = {0.0, 0.0, 0.0, 0.0, 0.0};
 
-    Node* node;
+    double* outputs;
+    outputs = get_genome_outputs(g1);
+
     printf("\n");
     printf("Outputs:\n");
-    for (i=0; i<outputs.size; i++) {
-        node = vector_get(&outputs, i);
-        printf("    %f\n", node->value);
+    for (i=0; i<g1->outputs->size; i++) {
+        printf("    %f\n", outputs[i]);
     }
+
+    double fitness = calculate_simple_fitness(outputs, desired, (size_t)g1->outputs->size);
+    printf("\n");
+    printf("Fitness of this Genome: %f\n", fitness);
 
     return 0;
 }
