@@ -1,7 +1,6 @@
 
 from collections import namedtuple
 import sys
-import os
 from PIL import Image, ImageDraw
 
 Node = namedtuple('Node', ['id', 'level', 'center'])
@@ -16,7 +15,6 @@ def read_data(filename):
     def to_node(s):
         node_id, node_level = s.split()
         return Node(int(node_id), int(node_level[1:-1]), None)
-
 
     inputs = []
     hidden = []
@@ -91,9 +89,14 @@ def render(data):
 
     return im
 
-if __name__ == '__main__':
+
+def main():
     filename = sys.argv[1]
     data = read_data(filename)
     im = render(data)
     filenamebase, ext = filename.rsplit('.', 1)
-    im.save(f'{filenamebase}.png')
+    im.save('{}.png'.format(filenamebase))
+
+
+if __name__ == '__main__':
+    main()
