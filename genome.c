@@ -185,6 +185,9 @@ Node* find_node_in_vector(Vector* v, int32_t id) {
 
 
 int mutate_split_connection(Genome* g) {
+    if (g->conn_count == 0) {
+        return -1;
+    }
     int r = rand() % g->conn_count;
     Connection* c = get_connection(g, r);
     while (!c->enabled) {
