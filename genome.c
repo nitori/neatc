@@ -295,13 +295,16 @@ Genome* mate(Genome* g1, Genome* g2) {
         node_out = find_node_in_genome(offspring, new_c->out->id);
         if (node_in == NULL) {
             node_in = clone_node(new_c->in);
+            vector_append(offspring->hidden, node_in);
         }
         if (node_out == NULL) {
             node_out = clone_node(new_c->out);
+            vector_append(offspring->hidden, node_out);
         }
-        new_c->in = node_in;
-        new_c->out = node_out;
+        new_c->in = NULL;
+        new_c->out = NULL;
         add_connection(offspring, new_c);
+        connect(new_c, node_in, node_out);
     }
 
     return offspring;

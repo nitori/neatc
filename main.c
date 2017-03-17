@@ -12,22 +12,12 @@ int main(int argc, char** argv) {
     srand((unsigned int)time(NULL));
 
     Species* species = new_species();
-    Genome* g;
+    Genome* base_genome = new_genome(INPUT_COUNT, OUTPUT_COUNT);
+    Genome* clone;
     for (i=0; i<INITIAL_GENOMES; i++) {
-        g = new_genome(INPUT_COUNT, OUTPUT_COUNT);
-        add_genome(species, g);
+        clone = clone_genome(base_genome);
+        add_genome(species, clone);
     }
-
-    Genome* g1 = vector_get(species->genomes, 0);
-    Genome* g2 = vector_get(species->genomes, 1);
-
-    mutate_connect(g2);
-
-    Genome* g3 = mate(g1, g2);
-
-    print_genome(g1);
-    print_genome(g2);
-    print_genome(g3);
 
     return 0;
 }
