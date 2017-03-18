@@ -19,6 +19,7 @@
 typedef uint8_t bool;
 
 #include "vector.h"
+#include "list.h"
 
 typedef struct Node Node;
 typedef struct Connection Connection;
