@@ -28,11 +28,17 @@ typedef struct Species Species;
 typedef struct Population Population;
 typedef struct DeltaResult DeltaResult;
 
+typedef enum InnovationType InnovationType;
+typedef struct Innovation Innovation;
+typedef struct LinkInnovation LinkInnovation;
+typedef struct NodeInnovation NodeInnovation;
+
 #include "node.h"
 #include "link.h"
 #include "genome.h"
 #include "species.h"
 #include "population.h"
+#include "innovation.h"
 
 
 struct DeltaResult {
