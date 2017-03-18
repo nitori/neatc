@@ -2,7 +2,7 @@
 // Created by nitori on 16/03/17.
 //
 
-#include <neat/link.h>
+#include "link.h"
 
 
 Link* new_link() {

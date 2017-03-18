@@ -1,5 +1,5 @@
 
-#include <neat/neat.h>
+#include "neat.h"
 
 
 

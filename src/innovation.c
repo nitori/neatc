@@ -2,7 +2,7 @@
 // Created by nitori on 18.03.17.
 //
 
-#include <neat/innovation.h>
+#include "innovation.h"
 
 
 Innovation * new_link_innovation(NodeId node_in_id, NodeId node_out_id, INumber new_link_inumber) {
