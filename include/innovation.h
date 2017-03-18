@@ -5,15 +5,8 @@
 #ifndef NEAT_INNOVATION_H
 #define NEAT_INNOVATION_H
 
-#include <stdint.h>
-#include <stdlib.h>
-
 #include "types.h"
 
-typedef enum InnovationType InnovationType;
-typedef struct LinkInnovation LinkInnovation;
-typedef struct NodeInnovation NodeInnovation;
-typedef struct Innovation Innovation;
 
 enum InnovationType {
     InnovationLinkType,
@@ -21,13 +14,13 @@ enum InnovationType {
 };
 
 struct LinkInnovation {
-    NodeId node_in_id;
-    NodeId node_out_id;
+    NeuronId node_in_id;
+    NeuronId node_out_id;
     INumber new_link_inumber;
 };
 struct NodeInnovation {
     INumber inumber;
-    NodeId new_node_id;
+    NeuronId new_node_id;
     INumber new_link_in_inumber;
     INumber new_link_out_inumber;
 };
@@ -42,13 +35,13 @@ struct Innovation {
 
 
 Innovation* new_link_innovation(
-        NodeId node_in_id,
-        NodeId node_out_id,
+        NeuronId node_in_id,
+        NeuronId node_out_id,
         INumber new_link_inumber);
 
 Innovation* new_node_innovation(
         INumber inumber,
-        NodeId new_node_id,
+        NeuronId new_node_id,
         INumber new_link_in_inumber,
         INumber new_link_out_inumber);
 

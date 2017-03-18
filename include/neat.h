@@ -22,6 +22,8 @@
 // neat related includes
 #include "innovation.h"
 #include "link.h"
+#include "neuron.h"
+#include "genome.h"
 
 
 #endif //NEAT_NEAT_H

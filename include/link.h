@@ -5,17 +5,11 @@
 #ifndef NEAT_CONNECTION_H
 #define NEAT_CONNECTION_H
 
-#include <stdint.h>
-#include <stdlib.h>
-
 #include "types.h"
-#include "innovation.h"
-
-typedef struct Link Link;
 
 struct Link {
-    //Node* in;
-    //Node* out;
+    Neuron* in;
+    Neuron* out;
     double weight;
     bool enabled;
     INumber inumber;
@@ -23,7 +17,6 @@ struct Link {
 
 
 Link* new_link();
-void link_init(Link* link, double weight, bool enabled);
-void link_free(Link *c);
+void link_init(Link* link);
 
 #endif //NEAT_CONNECTION_H

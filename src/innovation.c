@@ -2,10 +2,15 @@
 // Created by nitori on 18.03.17.
 //
 
+#include <stdlib.h>
 #include "innovation.h"
 
 
-Innovation * new_link_innovation(NodeId node_in_id, NodeId node_out_id, INumber new_link_inumber) {
+Innovation* new_link_innovation(
+        NeuronId node_in_id,
+        NeuronId node_out_id,
+        INumber new_link_inumber) {
+
     Innovation* innov = calloc(1, sizeof(Innovation));
     innov->type = InnovationLinkType;
     innov->innovation.link.new_link_inumber = new_link_inumber;
@@ -14,8 +19,12 @@ Innovation * new_link_innovation(NodeId node_in_id, NodeId node_out_id, INumber 
     return innov;
 }
 
-Innovation * new_node_innovation(INumber inumber, NodeId new_node_id,
-                                 INumber new_link_in_inumber, INumber new_link_out_inumber) {
+Innovation* new_node_innovation(
+        INumber inumber,
+        NeuronId new_node_id,
+        INumber new_link_in_inumber,
+        INumber new_link_out_inumber) {
+
     Innovation* innov = calloc(1, sizeof(Innovation));
     innov->type = InnovationNodeType;
     innov->innovation.node.inumber = inumber;
