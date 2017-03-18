@@ -5,6 +5,7 @@
 #ifndef NEAT_LIST_H
 #define NEAT_LIST_H
 
+#include <stdlib.h>
 #include <stdint.h>
 
 #define LIST_INITIAL_CAPACITY 100

@@ -5,19 +5,20 @@
 #ifndef NEAT_NEURON_H
 #define NEAT_NEURON_H
 
+#include "list.h"
 #include "types.h"
 
-enum NeuronType {
+typedef enum NeuronType {
     NormalNeuron,
     BiasNeuron,
-};
+} NeuronType;
 
-struct Neuron {
+typedef struct Neuron {
     NeuronId id;
     NeuronType type;
     double value;
     List inputs;
-};
+} Neuron;
 
 Neuron* new_neuron();
 void neuron_init(Neuron* neuron);

@@ -2,8 +2,9 @@
 // Created by nitori on 18.03.17.
 //
 
-#include <stdlib.h>
 #include "innovation.h"
+
+#include <stdlib.h>
 
 
 Innovation* new_link_innovation(

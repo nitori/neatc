@@ -2,10 +2,11 @@
 // Created by nitori on 18.03.17.
 //
 
+#include "list.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "list.h"
 
 List* new_list() {
     List* list = calloc(1, sizeof(List));

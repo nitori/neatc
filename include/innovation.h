@@ -8,30 +8,31 @@
 #include "types.h"
 
 
-enum InnovationType {
+typedef enum InnovationType {
     InnovationLinkType,
     InnovationNodeType,
-};
+} InnovationType;
 
-struct LinkInnovation {
+typedef struct LinkInnovation {
     NeuronId node_in_id;
     NeuronId node_out_id;
     INumber new_link_inumber;
-};
-struct NodeInnovation {
+} LinkInnovation;
+
+typedef struct NodeInnovation {
     INumber inumber;
     NeuronId new_node_id;
     INumber new_link_in_inumber;
     INumber new_link_out_inumber;
-};
+} NodeInnovation;
 
-struct Innovation {
+typedef struct Innovation {
     InnovationType type;
     union {
         LinkInnovation link;
         NodeInnovation node;
     } innovation;
-};
+} Innovation;
 
 
 Innovation* new_link_innovation(

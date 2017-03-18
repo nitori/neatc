@@ -2,9 +2,9 @@
 // Created by nitori on 18.03.17.
 //
 
-#include <stdlib.h>
 #include "neuron.h"
 #include "innovation.h"
+#include <stdlib.h>
 
 Neuron* new_neuron() {
     return calloc(1, sizeof(Neuron));

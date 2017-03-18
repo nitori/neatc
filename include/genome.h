@@ -8,8 +8,8 @@
 #include "types.h"
 
 
-struct Genome {
+typedef struct Genome {
 
-};
+} Genome;
 
 #endif //NEAT_GENOME_H

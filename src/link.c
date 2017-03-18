@@ -1,9 +1,9 @@
 //
 // Created by nitori on 16/03/17.
 //
-#include <stdlib.h>
 #include "link.h"
 #include "innovation.h"
+#include <stdlib.h>
 
 
 Link* new_link() {

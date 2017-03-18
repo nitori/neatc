@@ -6,14 +6,15 @@
 #define NEAT_CONNECTION_H
 
 #include "types.h"
+#include "neuron.h"
 
-struct Link {
+typedef struct Link {
     Neuron* in;
     Neuron* out;
     double weight;
     bool enabled;
     INumber inumber;
-};
+} Link;
 
 
 Link* new_link();
