@@ -3,6 +3,7 @@ project(neat)
 
 set(CMAKE_C_STANDARD 99)
 
-set(SOURCE_FILES main.c neat.c link.c genome.c vector.c node.c species.c population.c list.c innovation.c)
+include_directories(include)
+set(SOURCE_FILES src/main.c src/link.c src/list.c src/innovation.c)
 add_executable(neat ${SOURCE_FILES})
 target_link_libraries(neat m)

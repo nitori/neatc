@@ -4,7 +4,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "list.h"
+
+#include <neat/list.h>
 
 List* new_list() {
     List* list = calloc(1, sizeof(List));
