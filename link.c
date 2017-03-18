@@ -4,8 +4,8 @@
 #include "neat.h"
 
 
-Connection* new_connection(double weight, bool enabled) {
-    Connection* c = calloc(1, sizeof(Connection));
+Link* new_connection(double weight, bool enabled) {
+    Link* c = calloc(1, sizeof(Link));
     if (c == NULL) {
         return NULL;
     }
@@ -17,14 +17,14 @@ Connection* new_connection(double weight, bool enabled) {
     return c;
 }
 
-void connect(Connection* c, Node* in, Node* out) {
+void connect(Link* c, Node* in, Node* out) {
     c->in = in;
     c->out = out;
 }
 
-int add_connection(Genome* g, Connection* c) {
+int add_connection(Genome* g, Link* c) {
     if (c->owner != NULL) {
-        fprintf(stderr, "Connection is already owned by another genome.\n");
+        fprintf(stderr, "Link is already owned by another genome.\n");
         return -1;
     }
     c->owner = g;
@@ -32,15 +32,15 @@ int add_connection(Genome* g, Connection* c) {
     return 0;
 }
 
-Connection* clone_connection(Connection* c) {
-    Connection* new_c = calloc(1, sizeof(*c));
+Link* clone_connection(Link* c) {
+    Link* new_c = calloc(1, sizeof(*c));
     memcpy(new_c, c, sizeof(*c));
     new_c->owner = NULL;
     return new_c;
 }
 
-Connection* find_connection(Genome* g, int32_t inumber) {
-    Connection* current;
+Link* find_connection(Genome* g, int32_t inumber) {
+    Link* current;
     int i;
     for (i=0; i<g->connections->size; i++) {
         current = vector_get(g->connections, i);
@@ -53,6 +53,6 @@ Connection* find_connection(Genome* g, int32_t inumber) {
     return NULL;
 }
 
-void free_connection(Connection* c) {
+void free_connection(Link* c) {
     free(c);
 }

@@ -22,14 +22,14 @@ typedef uint8_t bool;
 #include "list.h"
 
 typedef struct Node Node;
-typedef struct Connection Connection;
+typedef struct Link Link;
 typedef struct Genome Genome;
 typedef struct Species Species;
 typedef struct Population Population;
 typedef struct DeltaResult DeltaResult;
 
 #include "node.h"
-#include "connection.h"
+#include "link.h"
 #include "genome.h"
 #include "species.h"
 #include "population.h"

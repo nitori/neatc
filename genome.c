@@ -10,10 +10,10 @@ int print_genome(Genome* g) {
     printf("  Connections:\n");
 
     int i;
-    Connection* current;
+    Link* current;
     for (i=0; i<g->connections->size; i++) {
         current = vector_get(g->connections, i);
-        printf("    Connection(%s, [%p], in=(%d, %f, [%p]), out=(%d, %f, %p), inumber=%d, weight=%f)\n",
+        printf("    Link(%s, [%p], in=(%d, %f, [%p]), out=(%d, %f, %p), inumber=%d, weight=%f)\n",
                current->enabled ? " ON" : "OFF",
                current,
                current->in->id, current->in->value, current->in,
@@ -95,8 +95,8 @@ void delta_genomes(DeltaResult* result, Genome* g1, Genome* g2, double coeff_d, 
     int32_t disjoint_count = 0;
 
     int n1 = 0, n2 = 0;
-    Connection* c1;
-    Connection* c2;
+    Link* c1;
+    Link* c2;
     while (n1 < g1->connections->size && n2 < g2->connections->size) {
         c1 = vector_get(g1->connections, n1);
         c2 = vector_get(g2->connections, n2);
@@ -144,7 +144,7 @@ Genome* clone_genome(Genome* g) {
         vector_append(clone->outputs, clone_node(vector_get(g->outputs, i)));
     }
 
-    Connection* conn_clone;
+    Link* conn_clone;
     for (i=0; i<g->connections->size; i++) {
         conn_clone = clone_connection(vector_get(g->connections, i));
         conn_clone->in = find_node_in_genome(clone, conn_clone->in->id);
@@ -202,7 +202,7 @@ int mutate_split_connection(Genome* g) {
         return -1;
     }
     int r = rand() % g->connections->size;
-    Connection* c = vector_get(g->connections, r);
+    Link* c = vector_get(g->connections, r);
     while (!c->enabled || (c->out->level - c->in->level) <= 1) {
         r = rand() % g->connections->size;
         c = vector_get(g->connections, r);
@@ -213,8 +213,8 @@ int mutate_split_connection(Genome* g) {
     Node* node = new_node();
     node->level = (rand() % (c->out->level - (c->in->level+1))) + c->in->level + 1;
 
-    Connection* c1 = new_connection(1.0, true);
-    Connection* c2 = new_connection(c->weight, true);
+    Link* c1 = new_connection(1.0, true);
+    Link* c2 = new_connection(c->weight, true);
     connect(c1, c->in, node);
     connect(c2, node, c->out);
 
@@ -235,7 +235,7 @@ int mutate_connect(Genome* g) {
     } while(node1->level >= node2->level);
 
     double weight = ((double)rand() / (double)RAND_MAX) * 2.0;
-    Connection* c = new_connection(weight, true);
+    Link* c = new_connection(weight, true);
     connect(c, node1, node2);
     add_connection(g, c);
 
@@ -244,16 +244,16 @@ int mutate_connect(Genome* g) {
 
 int mutate_weight(Genome* g) {
     int r = rand() % g->connections->size;
-    Connection* c = vector_get(g->connections, r);
+    Link* c = vector_get(g->connections, r);
     c->weight *= ((double)rand() / (double)RAND_MAX);
     return 0;
 }
 
 Genome* mate(Genome* g1, Genome* g2) {
     Genome* offspring = new_genome(0, 0);
-    Connection* c1;
-    Connection* c2;
-    Connection* new_c;
+    Link* c1;
+    Link* c2;
+    Link* new_c;
     Node* node_in;
     Node* node_out;
     int n1 = 0, n2 = 0;
@@ -357,7 +357,7 @@ void get_genome_outputs(Genome* g, double* outputs) {
 void evaluate_genome(Genome* g) {
     int level;
     int i;
-    Connection* c;
+    Link* c;
     for (level=0; level<=MAX_HIDDEN_LEVELS+1; level++) {
         for (i=0; i<g->connections->size; i++) {
             c = vector_get(g->connections, i);
@@ -442,7 +442,7 @@ void save_genome(Genome* g, const char* filename) {
 
     fprintf(f, "connections:\n");
     int i;
-    Connection* c;
+    Link* c;
     for (i=0; i<g->connections->size; i++) {
         c = vector_get(g->connections, i);
         fprintf(f, "%d %s %f %d %d\n",
