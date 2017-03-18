@@ -15,11 +15,11 @@ struct Link {
 };
 
 
-Link* new_connection(double weight, bool enabled);
+Link* new_link(double weight, bool enabled);
 void connect(Link* c, Node* in, Node* out);
-int add_connection(Genome* g, Link* c);
-Link* clone_connection(Link* c);
-Link* find_connection(Genome* g, int32_t inumber);
-void free_connection(Link* c);
+int add_link(Genome *g, Link *c);
+Link* clone_link(Link *c);
+Link* find_link(Genome *g, int32_t inumber);
+void free_link(Link *c);
 
 #endif //NEAT_CONNECTION_H

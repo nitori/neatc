@@ -8,7 +8,7 @@
 struct Genome {
     double fitness;
 
-    Vector* connections;
+    Vector* links;
 
     // nodes
     Vector* inputs;
@@ -30,8 +30,8 @@ Node* find_node_in_genome(Genome* g, int32_t id);
 Node* find_node_in_vector(Vector* v, int32_t id);
 Node* get_random_node(Genome* g);
 
-int mutate_split_connection(Genome* g);
-int mutate_connect(Genome* g);
+int mutate_split_link(Genome *g);
+int mutate_link(Genome *g);
 int mutate_weight(Genome* g);
 
 void set_genome_inputs(Genome* g, Vector* inputs);
