@@ -16,6 +16,7 @@ typedef enum NeuronType {
 typedef struct Neuron {
     NeuronId id;
     NeuronType type;
+    int32_t level;
     double value;
     List inputs;
 } Neuron;

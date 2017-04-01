@@ -23,12 +23,14 @@ Innovation* new_link_innovation(
 Innovation* new_node_innovation(
         INumber inumber,
         NeuronId new_node_id,
+        int32_t new_node_level,
         INumber new_link_in_inumber,
         INumber new_link_out_inumber) {
 
     Innovation* innov = calloc(1, sizeof(Innovation));
     innov->type = InnovationNodeType;
     innov->innovation.node.inumber = inumber;
+    innov->innovation.node.new_node_level = new_node_level;
     innov->innovation.node.new_node_id = new_node_id;
     innov->innovation.node.new_link_in_inumber = new_link_in_inumber;
     innov->innovation.node.new_link_out_inumber = new_link_out_inumber;

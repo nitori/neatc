@@ -22,6 +22,7 @@ typedef struct LinkInnovation {
 typedef struct NodeInnovation {
     INumber inumber;
     NeuronId new_node_id;
+    int32_t new_node_level;
     INumber new_link_in_inumber;
     INumber new_link_out_inumber;
 } NodeInnovation;
@@ -43,6 +44,7 @@ Innovation* new_link_innovation(
 Innovation* new_node_innovation(
         INumber inumber,
         NeuronId new_node_id,
+        int32_t new_node_level,
         INumber new_link_in_inumber,
         INumber new_link_out_inumber);
 

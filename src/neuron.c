@@ -13,6 +13,7 @@ Neuron* new_neuron() {
 void neuron_init(Neuron* neuron) {
     neuron->id = next_inumber();
     neuron->type = NormalNeuron;
+    neuron->level = 0;
     neuron->value = 0.0;
     list_init(&neuron->inputs);
 }
