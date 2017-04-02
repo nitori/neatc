@@ -9,6 +9,7 @@
 
 #include <stdlib.h>
 #include <innovation.h>
+#include <string.h>
 
 Genome* new_genome() {
     return calloc(1, sizeof(Genome));
@@ -145,6 +146,44 @@ int genome_mutate(Genome* genome, Population* population, Innovation* innovation
     } else {
         return genome_mutate_add_neuron(genome, population, innovation);
     }
+}
+
+void genome_clone(Genome* genome, Genome* clone) {
+    int i, j;
+    Neuron* map[genome->neurons.size][2];
+    Neuron* neuron;
+    Neuron* neuron_clone;
+
+    genome_init(clone);
+    clone->max_levels = genome->max_levels;
+    clone->species = genome->species;
+
+    for (i=0; i<genome->neurons.size; i++) {
+        neuron = list_get(&genome->neurons, i)->data;
+        neuron_clone = new_neuron();
+        memcpy(neuron_clone, neuron, sizeof(*neuron));
+        map[i][0] = neuron;
+        map[i][1] = neuron_clone;
+        list_append(&clone->neurons, new_listitem(neuron_clone));
+    }
+
+    Link* link;
+    Link* link_clone;
+    for (i=0; i<genome->links.size; i++) {
+        link = list_get(&genome->links, i)->data;
+        link_clone = new_link();
+        memcpy(link_clone, link, sizeof(*link));
+        for (j=0; j<genome->neurons.size; j++) {
+            if (link_clone->in == map[j][0]) {
+                link_clone->in = map[j][1];
+            }
+            if (link_clone->out == map[j][0]) {
+                link_clone->out = map[j][0];
+            }
+        }
+        list_append(&clone->links, new_listitem(link_clone));
+    }
+
 }
 
 

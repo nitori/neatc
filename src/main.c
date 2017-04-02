@@ -23,7 +23,7 @@ void print_genome(Genome* genome, const char* name) {
         } else {
             type = "hidden";
         }
-        printf("  Neuron: [id: %d, level: %d] (%s)\n", (int)neuron->id, neuron->level, type);
+        printf("  Neuron: [%p, id: %d, level: %d] (%s)\n", neuron, (int)neuron->id, neuron->level, type);
     }
     Link* link;
     char* state;
@@ -34,7 +34,8 @@ void print_genome(Genome* genome, const char* name) {
         } else {
             state = "OFF";
         }
-        printf("  Link: [%s, inumber: %d, weight: %f, neurons: %d->%d]\n",
+        printf("  Link: [%p, %s, inumber: %d, weight: %f, neurons: %d->%d]\n",
+               link,
                state,
                (int)link->inumber,
                link->weight,
@@ -60,15 +61,7 @@ int main(int argc, char** argv) {
     genome_init_inputs(&g1, 1);
     genome_init_outputs(&g1, 1);
 
-    genome_init_inputs(&g2, 1);
-    genome_init_outputs(&g2, 1);
-
-    Neuron *n;
-    // pretend it's a clone (no clone function written yet)
-    n = list_get(&g2.neurons, 0)->data;
-    n->id = 1;
-    n = list_get(&g2.neurons, 1)->data;
-    n->id = 2;
+    genome_clone(&g1, &g2);
 
     printf("* Generate two genomes that have the same structure.\n* One input and one output.\n\n");
 
@@ -82,7 +75,7 @@ int main(int argc, char** argv) {
 
     int result;
 
-    // DO A RANDOM LINK MUTATION ON g1. Because we only have two nodes, the link will
+    // DO A RANDOM LINK MUTATION ON g1. Because we only have two neurons, the link will
     // be between those two
     result = genome_mutate_add_link(&g1, &population, innovation);
 
@@ -101,7 +94,7 @@ int main(int argc, char** argv) {
     innovation = new_innovation();
     innovation_init(innovation);
 
-    // DO A RANDOM LINK MUTATION ON g2. The same two nodes have to be connected,
+    // DO A RANDOM LINK MUTATION ON g2. The same two neurons have to be connected,
     // so it must find the already used innovation and apply the same inumber to
     // the new link in g2, as has been done in g1.
     result = genome_mutate_add_link(&g2, &population, innovation);
