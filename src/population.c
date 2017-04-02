@@ -27,7 +27,7 @@ void population_add_innovation(Population* population, Innovation* innovation) {
     list_append(&population->innovations, new_listitem(innovation));
 }
 
-LinkInnovation* population_find_link_innovation(Population* population, NeuronId node_in_id, NeuronId node_out_id) {
+LinkInnovation* population_find_link_innovation(Population* population, NeuronId neuron_in_id, NeuronId neuron_out_id) {
     int i;
     ListItem* item;
     Innovation* innovation;
@@ -35,8 +35,8 @@ LinkInnovation* population_find_link_innovation(Population* population, NeuronId
         item = list_get(&population->innovations, i);
         innovation = item->data;
         if (innovation->type == InnovationLinkType) {
-            if (innovation->innovation.link.node_in_id == node_in_id &&
-                    innovation->innovation.link.node_out_id == node_out_id) {
+            if (innovation->innovation.link.neuron_in_id == neuron_in_id &&
+                    innovation->innovation.link.neuron_out_id == neuron_out_id) {
                 return &innovation->innovation.link;
             }
         }
@@ -44,16 +44,16 @@ LinkInnovation* population_find_link_innovation(Population* population, NeuronId
     return NULL;
 }
 
-NodeInnovation* population_find_node_innovation(Population* population, INumber inumber) {
+NeuronInnovation* population_find_neuron_innovation(Population* population, INumber inumber) {
     int i;
     ListItem* item;
     Innovation* innovation;
     for (i=0; i<population->innovations.size; i++) {
         item = list_get(&population->innovations, i);
         innovation = item->data;
-        if (innovation->type == InnovationNodeType) {
-            if (innovation->innovation.node.inumber == inumber) {
-                return &innovation->innovation.node;
+        if (innovation->type == InnovationNeuronType) {
+            if (innovation->innovation.neuron.inumber == inumber) {
+                return &innovation->innovation.neuron;
             }
         }
     }

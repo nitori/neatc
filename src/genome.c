@@ -62,15 +62,15 @@ int genome_mutate_add_link(Genome* genome, Population* population, Innovation* i
     LinkInnovation* link_innovation = population_find_link_innovation(population, neuron_in->id, neuron_out->id);
     if (link_innovation == NULL) {
         link_init(link);
-        innovation->innovation.link.node_in_id = neuron_in->id;
-        innovation->innovation.link.node_out_id = neuron_out->id;
+        innovation->innovation.link.neuron_in_id = neuron_in->id;
+        innovation->innovation.link.neuron_out_id = neuron_out->id;
         result = 1;
     } else {
         link->weight = (rand() / (1.0 + RAND_MAX)) * 2.0;
         link->enabled = true;
         link->inumber = link_innovation->new_link_inumber;
-        innovation->innovation.link.node_in_id = link_innovation->node_in_id;
-        innovation->innovation.link.node_out_id = link_innovation->node_out_id;
+        innovation->innovation.link.neuron_in_id = link_innovation->neuron_in_id;
+        innovation->innovation.link.neuron_out_id = link_innovation->neuron_out_id;
         result = 0;
     }
 
@@ -98,29 +98,29 @@ int genome_mutate_add_neuron(Genome* genome, Population* population, Innovation*
     Link* in = new_link();
     Link* out = new_link();
 
-    NodeInnovation* node_innovation = population_find_node_innovation(population, link->inumber);
-    if (node_innovation == NULL) {
+    NeuronInnovation* neuron_innovation = population_find_neuron_innovation(population, link->inumber);
+    if (neuron_innovation == NULL) {
         neuron_init(neuron);
         neuron->level = (rand() % (link->out->level - (link->in->level + 1))) + link->in->level + 1;
         link_init(in);
         link_init(out);
-        innovation->innovation.node.inumber = link->inumber;
+        innovation->innovation.neuron.inumber = link->inumber;
         result = 1;
     } else {
         // use existing innovations values
-        neuron->id = node_innovation->new_node_id;
-        neuron->level = node_innovation->new_node_level;
-        in->inumber = node_innovation->new_link_in_inumber;
-        out->inumber = node_innovation->new_link_out_inumber;
-        innovation->innovation.node.inumber = node_innovation->inumber;
+        neuron->id = neuron_innovation->new_neuron_id;
+        neuron->level = neuron_innovation->new_neuron_level;
+        in->inumber = neuron_innovation->new_link_in_inumber;
+        out->inumber = neuron_innovation->new_link_out_inumber;
+        innovation->innovation.neuron.inumber = neuron_innovation->inumber;
         result = 0;
     }
 
-    innovation->type = InnovationNodeType;
-    innovation->innovation.node.new_node_id = neuron->id;
-    innovation->innovation.node.new_node_level = neuron->level;
-    innovation->innovation.node.new_link_in_inumber = in->inumber;
-    innovation->innovation.node.new_link_out_inumber = out->inumber;
+    innovation->type = InnovationNeuronType;
+    innovation->innovation.neuron.new_neuron_id = neuron->id;
+    innovation->innovation.neuron.new_neuron_level = neuron->level;
+    innovation->innovation.neuron.new_link_in_inumber = in->inumber;
+    innovation->innovation.neuron.new_link_out_inumber = out->inumber;
 
     in->weight = 1.0;
     out->weight = link->weight;
@@ -139,7 +139,7 @@ int genome_mutate_add_neuron(Genome* genome, Population* population, Innovation*
 }
 
 int genome_mutate(Genome* genome, Population* population, Innovation* innovation) {
-    // link or node mutation
+    // link or neuron mutation
     if (rand() % 2 == 0) {
         return genome_mutate_add_link(genome, population, innovation);
     } else {

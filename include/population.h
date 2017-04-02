@@ -24,8 +24,8 @@ void population_init(Population* population);
 void population_add_species(Population* population, Species* species);
 void population_add_innovation(Population* population, Innovation* innovation);
 
-LinkInnovation* population_find_link_innovation(Population* population, NeuronId node_in_id, NeuronId node_out_id);
-NodeInnovation* population_find_node_innovation(Population* population, INumber inumber);
+LinkInnovation* population_find_link_innovation(Population* population, NeuronId neuron_in_id, NeuronId neuron_out_id);
+NeuronInnovation* population_find_neuron_innovation(Population* population, INumber inumber);
 
 void population_free(Population* population);
 
