@@ -126,8 +126,10 @@ int genome_mutate_add_neuron(Genome* genome, Population* population, Innovation*
     out->weight = link->weight;
     in->in = link->in;
     in->out = neuron;
+    in->enabled = true;
     out->in = neuron;
     out->out = link->out;
+    out->enabled = true;
     link->enabled = false;
 
     list_append(&genome->neurons, new_listitem(neuron));
