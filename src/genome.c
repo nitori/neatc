@@ -268,10 +268,8 @@ void genome_crossover(Genome* parent1, Genome* parent2, Genome* offspring) {
         return;
     }
 
-    size_t max_size = parent1->links.size >= parent2->links.size ? parent1->links.size : parent2->links.size;
-    size_t min_size = parent1->links.size <= parent2->links.size ? parent1->links.size : parent2->links.size;
-    NeuronId min_id = -1;
-    NeuronId max_id = -1;
+    size_t max_size = (size_t)fmax(parent1->links.size, parent2->links.size);
+    size_t min_size = (size_t)fmin(parent1->links.size, parent2->links.size);
     Link* link1;
     Link* link2;
     Link* link;
@@ -334,13 +332,6 @@ void genome_crossover(Genome* parent1, Genome* parent2, Genome* offspring) {
             offspring_link->enabled = link->enabled;
             offspring_link->in = link->in; // CLONE LATER
             offspring_link->out = link->out; // CLONE LATER
-            if (min_id == -1) {
-                min_id = link->in->id;
-            }
-            min_id = link->in->id < min_id ? link->in->id : min_id;
-            min_id = link->out->id < min_id ? link->out->id : min_id;
-            max_id = link->in->id > max_id ? link->in->id : max_id;
-            max_id = link->out->id > max_id ? link->out->id : max_id;
             list_append(&offspring->links, new_listitem(offspring_link));
         }
     }
@@ -370,13 +361,6 @@ void genome_crossover(Genome* parent1, Genome* parent2, Genome* offspring) {
             offspring_link->enabled = link->enabled;
             offspring_link->in = link->in; // CLONE LATER
             offspring_link->out = link->out; // CLONE LATER
-            if (min_id == -1) {
-                min_id = link->in->id;
-            }
-            min_id = link->in->id < min_id ? link->in->id : min_id;
-            min_id = link->out->id < min_id ? link->out->id : min_id;
-            max_id = link->in->id > max_id ? link->in->id : max_id;
-            max_id = link->out->id > max_id ? link->out->id : max_id;
             list_append(&offspring->links, new_listitem(offspring_link));
         }
     }
@@ -387,6 +371,14 @@ void genome_crossover(Genome* parent1, Genome* parent2, Genome* offspring) {
     Neuron* neuron2;
     Neuron* neuron;
     Neuron* offspring_neuron;
+    NeuronId max_id = (NeuronId)fmax(
+            ((Neuron*)(list_get(&parent1->neurons, (int)parent1->neurons.size-1)->data))->id,
+            ((Neuron*)(list_get(&parent2->neurons, (int)parent2->neurons.size-1)->data))->id
+    );
+    NeuronId min_id = (NeuronId)fmax(
+            ((Neuron*)(list_get(&parent1->neurons, 0)->data))->id,
+            ((Neuron*)(list_get(&parent2->neurons, 0)->data))->id
+    );
     int j;
 
     for (i=min_id; i<=max_id; i++) {
