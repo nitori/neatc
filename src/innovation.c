@@ -4,8 +4,17 @@
 
 #include "innovation.h"
 
+#include <string.h>
 #include <stdlib.h>
 
+Innovation* new_innovation() {
+    return calloc(1, sizeof(Innovation));
+}
+
+void innovation_init(Innovation* innovation) {
+    memset(innovation, 0, sizeof(*innovation));
+    innovation->type = InnovationNoneType;
+}
 
 Innovation* new_link_innovation(
         NeuronId node_in_id,

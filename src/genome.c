@@ -24,6 +24,25 @@ void genome_init(Genome* genome) {
     list_init(&genome->neurons);
 }
 
+void genome_init_neurons(Genome* genome, size_t number_of_neurons, int32_t level) {
+    int i;
+    Neuron* neuron;
+    for (i=0; i<number_of_neurons; i++) {
+        neuron = new_neuron();
+        neuron_init(neuron);
+        neuron->level = level;
+        list_append(&genome->neurons, new_listitem(neuron));
+    }
+}
+
+void genome_init_inputs(Genome* genome, size_t number_of_inputs) {
+    genome_init_neurons(genome, number_of_inputs, 0);
+}
+
+void genome_init_outputs(Genome* genome, size_t number_of_outputs) {
+    genome_init_neurons(genome, number_of_outputs, genome->max_levels-1);
+}
+
 void genome_mutate_add_link(Genome* genome, Population* population, Innovation* innovation) {
     // chose two random unconnected(?) neurons (on different levels)
     // and add a link to connect them.

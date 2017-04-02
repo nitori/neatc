@@ -37,6 +37,9 @@ typedef struct Innovation {
 } Innovation;
 
 
+Innovation* new_innovation();
+void innovation_init(Innovation* innovation);
+
 Innovation* new_link_innovation(
         NeuronId node_in_id,
         NeuronId node_out_id,
