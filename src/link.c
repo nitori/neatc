@@ -17,3 +17,6 @@ void link_init(Link* link) {
     link->enabled = true;
     link->inumber = next_inumber();
 }
+
+void link_free(Link* link) {
+}

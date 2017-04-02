@@ -24,4 +24,6 @@ typedef struct Neuron {
 Neuron* new_neuron();
 void neuron_init(Neuron* neuron);
 
+void neuron_free(Neuron* neuron);
+
 #endif //NEAT_NEURON_H

@@ -15,6 +15,8 @@
 #include "link.h"
 #include "neuron.h"
 #include "genome.h"
+#include "species.h"
+#include "population.h"
 
 #include "types.h"
 

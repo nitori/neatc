@@ -9,8 +9,9 @@
 
 
 typedef enum InnovationType {
-    InnovationLinkType,
-    InnovationNodeType,
+    InnovationNoneType = 0,
+    InnovationLinkType = 1,
+    InnovationNodeType = 2,
 } InnovationType;
 
 typedef struct LinkInnovation {

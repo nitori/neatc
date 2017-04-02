@@ -17,3 +17,7 @@ void neuron_init(Neuron* neuron) {
     neuron->value = 0.0;
     list_init(&neuron->inputs);
 }
+
+void neuron_free(Neuron* neuron) {
+    list_free(&neuron->inputs);
+}

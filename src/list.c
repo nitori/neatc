@@ -127,5 +127,11 @@ ListItem* list_remove(List* list, ListIndex index) {
 }
 
 void list_free(List* list) {
+    int i;
+    ListItem* item;
+    for (i=0; i<list->size; i++) {
+        item = list_get(list, i);
+        free(item);
+    }
     free(list->items);
 }

@@ -21,4 +21,6 @@ typedef struct Link {
 Link* new_link();
 void link_init(Link* link);
 
+void link_free(Link* link);
+
 #endif //NEAT_CONNECTION_H
