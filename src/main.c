@@ -34,13 +34,15 @@ void print_genome(Genome* genome, const char* name) {
         } else {
             state = "OFF";
         }
-        printf("  Link: [%p, %s, inumber: %d, weight: %f, neurons: %d->%d]\n",
+        printf("  Link: [%p, %s, inumber: %d, weight: %f, neurons: %d->%d, (%p->%p)]\n",
                link,
                state,
                (int)link->inumber,
                link->weight,
                (int)link->in->id,
-               (int)link->out->id
+               (int)link->out->id,
+               link->in,
+               link->out
         );
     }
     printf("\n");
@@ -137,6 +139,15 @@ int main(int argc, char** argv) {
 
     double diff = genome_diff(&g1, &g2, 1.0, 1.0, 0.0);
     printf("Delta: %f\n", diff);
+
+    g2.fitness = 1.0;
+
+    Genome offspring;
+    genome_crossover(&g1, &g2, &offspring);
+
+    print_genome(&g1, "g1");
+    print_genome(&g2, "g2");
+    print_genome(&offspring, "offspring");
 
     return 0;
 }

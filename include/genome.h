@@ -20,7 +20,7 @@ typedef struct Genome {
     // reference to species to ensure one genome
     // is always only part of one species
     Species* species;
-
+    double fitness;
     int32_t max_levels;
     List neurons;
     List links;
@@ -37,6 +37,7 @@ int genome_mutate_add_neuron(Genome* genome, Population* population, Innovation*
 int genome_mutate(Genome* genome, Population* population, Innovation* innovation);
 void genome_clone(Genome* genome, Genome* clone);
 double genome_diff(Genome* g1, Genome* g2, double c1, double c2, double c3);
+void genome_crossover(Genome* parent1, Genome* parent2, Genome* offspring);
 
 void genome_free(Genome* genome);
 
