@@ -18,7 +18,6 @@ typedef struct Neuron {
     NeuronType type;
     int32_t level;
     double value;
-    List inputs;
 } Neuron;
 
 Neuron* new_neuron();
