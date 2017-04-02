@@ -32,9 +32,9 @@ void genome_init(Genome* genome);
 void genome_init_inputs(Genome* genome, size_t number_of_inputs);
 void genome_init_outputs(Genome* genome, size_t number_of_outputs);
 
-void genome_mutate_add_link(Genome* genome, Population* population, Innovation* innovation);
-void genome_mutate_add_neuron(Genome* genome, Population* population, Innovation* innovation);
-void genome_mutate(Genome* genome, Population* population, Innovation* innovation);
+int genome_mutate_add_link(Genome* genome, Population* population, Innovation* innovation);
+int genome_mutate_add_neuron(Genome* genome, Population* population, Innovation* innovation);
+int genome_mutate(Genome* genome, Population* population, Innovation* innovation);
 
 void genome_free(Genome* genome);
 

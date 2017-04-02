@@ -13,7 +13,6 @@ Innovation* new_innovation() {
 
 void innovation_init(Innovation* innovation) {
     memset(innovation, 0, sizeof(*innovation));
-    innovation->type = InnovationNoneType;
 }
 
 Innovation* new_link_innovation(

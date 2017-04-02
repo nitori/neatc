@@ -43,12 +43,13 @@ void genome_init_outputs(Genome* genome, size_t number_of_outputs) {
     genome_init_neurons(genome, number_of_outputs, genome->max_levels-1);
 }
 
-void genome_mutate_add_link(Genome* genome, Population* population, Innovation* innovation) {
+int genome_mutate_add_link(Genome* genome, Population* population, Innovation* innovation) {
     // chose two random unconnected(?) neurons (on different levels)
     // and add a link to connect them.
     Neuron* neuron_in;
     Neuron* neuron_out;
     int r1, r2;
+    int result;
     do {
         r1 = rand() % (int)genome->neurons.size;
         r2 = rand() % (int)genome->neurons.size;
@@ -61,26 +62,33 @@ void genome_mutate_add_link(Genome* genome, Population* population, Innovation* 
     LinkInnovation* link_innovation = population_find_link_innovation(population, neuron_in->id, neuron_out->id);
     if (link_innovation == NULL) {
         link_init(link);
-        innovation->type = InnovationLinkType;
         innovation->innovation.link.node_in_id = neuron_in->id;
         innovation->innovation.link.node_out_id = neuron_out->id;
-        innovation->innovation.link.new_link_inumber = link->inumber;
+        result = 1;
     } else {
-        innovation->type = InnovationNoneType;
         link->weight = (rand() / (1.0 + RAND_MAX)) * 2.0;
         link->enabled = true;
         link->inumber = link_innovation->new_link_inumber;
+        innovation->innovation.link.node_in_id = link_innovation->node_in_id;
+        innovation->innovation.link.node_out_id = link_innovation->node_out_id;
+        result = 0;
     }
+
+    innovation->type = InnovationLinkType;
+    innovation->innovation.link.new_link_inumber = link->inumber;
 
     link->in = neuron_in;
     link->out = neuron_out;
     list_append(&genome->links, new_listitem(link));
+    return result;
 }
 
-void genome_mutate_add_neuron(Genome* genome, Population* population, Innovation* innovation) {
+int genome_mutate_add_neuron(Genome* genome, Population* population, Innovation* innovation) {
     // chose a random link and split it to add a new neuron.
     Link* link;
     int r;
+    int result;
+
     do {
         r = rand() % (int) genome->links.size;
         link = list_get(&genome->links, r)->data;
@@ -96,20 +104,23 @@ void genome_mutate_add_neuron(Genome* genome, Population* population, Innovation
         neuron->level = (rand() % (link->out->level - (link->in->level + 1))) + link->in->level + 1;
         link_init(in);
         link_init(out);
-        innovation->type = InnovationNodeType;
         innovation->innovation.node.inumber = link->inumber;
-        innovation->innovation.node.new_node_id = neuron->id;
-        innovation->innovation.node.new_node_level = neuron->level;
-        innovation->innovation.node.new_link_in_inumber = in->inumber;
-        innovation->innovation.node.new_link_out_inumber = out->inumber;
+        result = 1;
     } else {
-        innovation->type = InnovationNoneType;
         // use existing innovations values
         neuron->id = node_innovation->new_node_id;
         neuron->level = node_innovation->new_node_level;
         in->inumber = node_innovation->new_link_in_inumber;
         out->inumber = node_innovation->new_link_out_inumber;
+        innovation->innovation.node.inumber = node_innovation->inumber;
+        result = 0;
     }
+
+    innovation->type = InnovationNodeType;
+    innovation->innovation.node.new_node_id = neuron->id;
+    innovation->innovation.node.new_node_level = neuron->level;
+    innovation->innovation.node.new_link_in_inumber = in->inumber;
+    innovation->innovation.node.new_link_out_inumber = out->inumber;
 
     in->weight = 1.0;
     out->weight = link->weight;
@@ -123,14 +134,15 @@ void genome_mutate_add_neuron(Genome* genome, Population* population, Innovation
     list_append(&genome->neurons, new_listitem(neuron));
     list_append(&genome->links, new_listitem(in));
     list_append(&genome->links, new_listitem(out));
+    return result;
 }
 
-void genome_mutate(Genome* genome, Population* population, Innovation* innovation) {
+int genome_mutate(Genome* genome, Population* population, Innovation* innovation) {
     // link or node mutation
     if (rand() % 2 == 0) {
-        genome_mutate_add_link(genome, population, innovation);
+        return genome_mutate_add_link(genome, population, innovation);
     } else {
-        genome_mutate_add_neuron(genome, population, innovation);
+        return genome_mutate_add_neuron(genome, population, innovation);
     }
 }
 
