@@ -128,5 +128,15 @@ int main(int argc, char** argv) {
     print_genome(&g1, "g1");
     print_genome(&g2, "g2");
 
+    innovation = new_innovation();
+    innovation_init(innovation);
+    genome_mutate_add_neuron(&g2, &population, innovation);
+
+    print_genome(&g1, "g1");
+    print_genome(&g2, "g2");
+
+    double diff = genome_diff(&g1, &g2, 1.0, 1.0, 0.0);
+    printf("Delta: %f\n", diff);
+
     return 0;
 }

@@ -36,6 +36,7 @@ int genome_mutate_add_link(Genome* genome, Population* population, Innovation* i
 int genome_mutate_add_neuron(Genome* genome, Population* population, Innovation* innovation);
 int genome_mutate(Genome* genome, Population* population, Innovation* innovation);
 void genome_clone(Genome* genome, Genome* clone);
+double genome_diff(Genome* g1, Genome* g2, double c1, double c2, double c3);
 
 void genome_free(Genome* genome);
 

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <innovation.h>
 #include <string.h>
+#include <math.h>
 
 Genome* new_genome() {
     return calloc(1, sizeof(Genome));
@@ -184,6 +185,51 @@ void genome_clone(Genome* genome, Genome* clone) {
         list_append(&clone->links, new_listitem(link_clone));
     }
 
+}
+
+// this function assumes, links in genomes are ordered ascending by their inumber.
+double genome_diff(Genome* g1, Genome* g2, double c1, double c2, double c3) {
+    int32_t disjoint_nodes = 0;
+    int32_t excess_nodes = 0;
+    double acc_weight_diff = 0.0;
+    int32_t joint_nodes = 0;
+    double N;
+
+    size_t max_size = g1->links.size >= g2->links.size ? g1->links.size : g2->links.size;
+    size_t min_size = g1->links.size <= g2->links.size ? g1->links.size : g2->links.size;
+
+    Link* link1;
+    Link* link2;
+    int i1, i2;
+
+    i1 = i2 = 0;
+    while (i1 < min_size && i2 < min_size) {
+        link1 = list_get(&g1->links, i1)->data;
+        link2 = list_get(&g2->links, i2)->data;
+        if (link2->inumber < link1->inumber) {
+            disjoint_nodes++;
+            i2++;
+        } else if(link1->inumber < link2->inumber) {
+            disjoint_nodes++;
+            i1++;
+        } else {
+            acc_weight_diff += fabs(link1->weight - link2->weight);
+            joint_nodes++;
+            i1++;
+            i2++;
+        }
+    }
+
+    if (i1 >= min_size) {
+        excess_nodes = (int32_t)max_size - i2;
+    } else {
+        excess_nodes = (int32_t)max_size - i1;
+    }
+
+    N = (max_size > 20 ? max_size : 1);
+    return (c1 * excess_nodes) / N
+           + (c2 * disjoint_nodes) / N
+           + c3 * (acc_weight_diff / (double)joint_nodes);
 }
 
 
