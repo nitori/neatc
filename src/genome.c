@@ -268,62 +268,50 @@ void genome_crossover(Genome* parent1, Genome* parent2, Genome* offspring) {
         return;
     }
 
-    size_t max_size = (size_t)fmax(parent1->links.size, parent2->links.size);
-    size_t min_size = (size_t)fmin(parent1->links.size, parent2->links.size);
     Link* link1;
     Link* link2;
     Link* link;
     Link* offspring_link;
 
-    int choice;
-    int i1, i2;
+    link1 = list_get(&parent1->links, (int)parent1->links.size-1)->data;
+    link2 = list_get(&parent2->links, (int)parent2->links.size-1)->data;
+    INumber max_inumber = max(link1->inumber, link2->inumber);
+
+    link1 = list_get(&parent1->links, 0)->data;
+    link2 = list_get(&parent2->links, 0)->data;
+    INumber min_inumber = min(link1->inumber, link2->inumber);
+
+    int i;
 
     genome_init(offspring);
     offspring->species = parent1->species;
     offspring->max_levels = parent1->max_levels;
 
-    // links
-    i1 = i2 = 0;
-    while (i1 < min_size && i2 < min_size) {
-        link1 = list_get(&parent1->links, i1)->data;
-        link2 = list_get(&parent2->links, i2)->data;
-        if (link1->inumber < link2->inumber) {
-            if (parent2->fitness > parent1->fitness) {
-                choice = 0;
-            } else if (parent2->fitness < parent1->fitness) {
-                choice = 1;
-            } else {
-                choice = rand() % 2;
-            }
-            if (choice == 0) {
-                link = link2;
-            } else {
-                link = NULL;
-            }
-            i1++;
-        } else if (link2->inumber < link1->inumber) {
-            if (parent2->fitness > parent1->fitness) {
-                choice = 0;
-            } else if (parent2->fitness < parent1->fitness) {
-                choice = 1;
-            } else {
-                choice = rand() % 2;
-            }
-            if (choice == 0) {
-                link = link2;
-            } else {
-                link = NULL;
-            }
-            i2++;
-        } else {
-            choice = rand() % 2;
-            if (choice == 0) {
+    for (i=min_inumber; i<=max_inumber; i++) {
+        link1 = genome_find_link(parent1, i);
+        link2 = genome_find_link(parent2, i);
+        link = NULL;
+        if (link1 == NULL && link2 == NULL) {
+            continue;
+        }
+        if (link1 != NULL && link2 != NULL) {
+            if (rand() % 2 == 0) {
                 link = link1;
-            }else {
+            } else {
                 link = link2;
             }
-            i1++;
-            i2++;
+        } else if (link1 != NULL) {
+            if (parent1->fitness > parent2->fitness) {
+                link = link1;
+            } else if (parent1->fitness == parent2->fitness && rand() % 2 == 0) {
+                link = link1;
+            }
+        } else {
+            if (parent2->fitness > parent1->fitness) {
+                link = link2;
+            } else if (parent2->fitness == parent1->fitness && rand() % 2 == 0) {
+                link = link2;
+            }
         }
         if (link != NULL) {
             offspring_link = new_link();
@@ -336,49 +324,20 @@ void genome_crossover(Genome* parent1, Genome* parent2, Genome* offspring) {
         }
     }
 
-    // also test excess links
-    int i;
-    Genome* parent = NULL;
-
-    if (i1 >= min_size) {
-        if (parent2->fitness == parent1->fitness && rand() % 2 == 0 ||
-                parent2->fitness > parent1->fitness) {
-            parent = parent2;
-        }
-    } else {
-        if (parent1->fitness == parent2->fitness && rand() % 2 == 0 ||
-                parent1->fitness > parent2->fitness) {
-            parent = parent1;
-        }
-    }
-
-    if (parent != NULL) {
-        for (i = (int) min_size; i < max_size; i++) {
-            link = list_get(&parent->links, i)->data;
-            offspring_link = new_link();
-            offspring_link->inumber = link->inumber;
-            offspring_link->weight = link->weight;
-            offspring_link->enabled = link->enabled;
-            offspring_link->in = link->in; // CLONE LATER
-            offspring_link->out = link->out; // CLONE LATER
-            list_append(&offspring->links, new_listitem(offspring_link));
-        }
-    }
-
-
     // neurons, based on links copied
     Neuron* neuron1;
     Neuron* neuron2;
     Neuron* neuron;
     Neuron* offspring_neuron;
-    NeuronId max_id = (NeuronId)fmax(
-            ((Neuron*)(list_get(&parent1->neurons, (int)parent1->neurons.size-1)->data))->id,
-            ((Neuron*)(list_get(&parent2->neurons, (int)parent2->neurons.size-1)->data))->id
-    );
-    NeuronId min_id = (NeuronId)fmax(
-            ((Neuron*)(list_get(&parent1->neurons, 0)->data))->id,
-            ((Neuron*)(list_get(&parent2->neurons, 0)->data))->id
-    );
+
+    neuron1 = list_get(&parent1->neurons, (int)parent1->neurons.size-1)->data;
+    neuron2 = list_get(&parent2->neurons, (int)parent2->neurons.size-1)->data;
+    NeuronId max_id = max(neuron1->id, neuron2->id);
+
+    neuron1 = list_get(&parent1->neurons, 0)->data;
+    neuron2 = list_get(&parent2->neurons, 0)->data;
+    NeuronId min_id = min(neuron1->id, neuron2->id);
+
     int j;
 
     for (i=min_id; i<=max_id; i++) {
