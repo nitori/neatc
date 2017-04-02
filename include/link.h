@@ -5,8 +5,9 @@
 #ifndef NEAT_CONNECTION_H
 #define NEAT_CONNECTION_H
 
-#include "types.h"
 #include "neuron.h"
+
+#include "types.h"
 
 typedef struct Link {
     Neuron* in;

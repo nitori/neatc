@@ -9,13 +9,15 @@
 #define OUTPUT_COUNT 5
 #define INITIAL_GENOMES 30
 
-#include "types.h"
 
 // neat related includes
 #include "innovation.h"
 #include "link.h"
 #include "neuron.h"
 #include "genome.h"
+
+#include "types.h"
+
 
 
 #endif //NEAT_NEAT_H
