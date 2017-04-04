@@ -72,99 +72,25 @@ int main(int argc, char** argv) {
     Population population;
     population_init(&population);
 
-    Genome g1;
-    Genome g2;
-    genome_init(&g1);
-    genome_init(&g2);
-
-    genome_init_inputs(&g1, 1);
-    genome_init_outputs(&g1, 1);
-
-    genome_clone(&g1, &g2);
-
-    printf("* Generate two genomes that have the same structure.\n* One input and one output.\n\n");
-
-    print_genome(&g1, "g1");
-    print_genome(&g2, "g2");
-
     Innovation* innovation;
 
-    innovation = new_innovation();
-    innovation_init(innovation);
+    Genome g1;
 
-    int result;
+    genome_init(&g1);
+    genome_init_inputs(&g1, 5);
+    genome_init_outputs(&g1, 5);
 
-    // DO A RANDOM LINK MUTATION ON g1. Because we only have two neurons, the link will
-    // be between those two
-    result = genome_mutate_add_link(&g1, &population, innovation);
-
-    if (result) {
-        printf("* New innovation.\n");
-        printf("* Link with inumber %d was created.\n\n", (int)innovation->innovation.link.new_link_inumber);
-        population_add_innovation(&population, innovation);
-    } else {
-        printf("* No new innovation.\n");
-        printf("* Link with inumber %d was reused.\n\n", (int)innovation->innovation.link.new_link_inumber);
+    int i;
+    for (i=0; i<100; i++) {
+        innovation = new_innovation();
+        if (i == 0) {
+            genome_mutate_add_link(&g1, &population, innovation);
+        } else {
+            genome_mutate(&g1, &population, innovation);
+        }
     }
 
-    print_genome(&g1, "g1");
-    print_genome(&g2, "g2");
-
-    innovation = new_innovation();
-    innovation_init(innovation);
-
-    // DO A RANDOM LINK MUTATION ON g2. The same two neurons have to be connected,
-    // so it must find the already used innovation and apply the same inumber to
-    // the new link in g2, as has been done in g1.
-    result = genome_mutate_add_link(&g2, &population, innovation);
-
-    if (result) {
-        printf("* New innovation.\n");
-        printf("* Link with inumber %d was created.\n\n", (int)innovation->innovation.link.new_link_inumber);
-        population_add_innovation(&population, innovation);
-    } else {
-        printf("* No new innovation.\n");
-        printf("* Link with inumber %d was reused.\n\n", (int)innovation->innovation.link.new_link_inumber);
-    }
-
-    print_genome(&g1, "g1");
-    print_genome(&g2, "g2");
-
-    innovation = new_innovation();
-    innovation_init(innovation);
-    result = genome_mutate_add_neuron(&g1, &population, innovation);
-    if (result) {
-        population_add_innovation(&population, innovation);
-    }
-
-    innovation = new_innovation();
-    innovation_init(innovation);
-    result = genome_mutate_add_neuron(&g2, &population, innovation);
-    if (result) {
-        population_add_innovation(&population, innovation);
-    }
-
-    print_genome(&g1, "g1");
-    print_genome(&g2, "g2");
-
-    innovation = new_innovation();
-    innovation_init(innovation);
-    genome_mutate_add_neuron(&g2, &population, innovation);
-
-    print_genome(&g1, "g1");
-    print_genome(&g2, "g2");
-
-    double diff = genome_diff(&g1, &g2, 1.0, 1.0, 0.0);
-    printf("Delta: %f\n", diff);
-
-    g2.fitness = 1.0;
-
-    Genome offspring;
-    genome_crossover(&g1, &g2, &offspring);
-
-    print_genome(&g1, "g1");
-    print_genome(&g2, "g2");
-    print_genome(&offspring, "offspring");
+    genome_dump(&g1);
 
     return 0;
 }
