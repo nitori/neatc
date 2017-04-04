@@ -22,6 +22,7 @@
 #include "population.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <innovation.h>
 #include <string.h>
 #include <math.h>
@@ -383,6 +384,69 @@ void genome_crossover(Genome* parent1, Genome* parent2, Genome* offspring) {
     }
 }
 
+void genome_dump(Genome* genome) {
+    int level;
+    int i;
+    Neuron* neuron;
+
+    // collect neurons
+    Neuron *inputs[genome->neurons.size];
+    int i_input = 0;
+    Neuron *hidden[genome->neurons.size];
+    int i_hidden = 0;
+    Neuron *outputs[genome->neurons.size];
+    int i_output = 0;
+
+    for (i=0; i<genome->neurons.size; i++) {
+        neuron = list_get(&genome->neurons, i)->data;
+        if (neuron->level == 0) {
+            inputs[i_input] = neuron;
+            i_input++;
+        } else if (neuron->level == genome->max_levels - 1) {
+            outputs[i_output] = neuron;
+            i_output++;
+        } else {
+            hidden[i_hidden] = neuron;
+            i_hidden++;
+        }
+    }
+
+    // print neurons
+    printf("inputs = ");
+    for (i=0; i<i_input; i++) {
+        if (i>0) {
+            printf(", ");
+        }
+        printf("%d [%d]", inputs[i]->id, inputs[i]->level);
+    }
+    printf("\n");
+    printf("hidden = ");
+    for (i=0; i<i_hidden; i++) {
+        if (i>0) {
+            printf(", ");
+        }
+        printf("%d [%d]", hidden[i]->id, hidden[i]->level);
+    }
+    printf("\n");
+    printf("outputs = ");
+    for (i=0; i<i_output; i++) {
+        if (i>0) {
+            printf(", ");
+        }
+        printf("%d [%d]", outputs[i]->id, outputs[i]->level);
+    }
+    printf("\n");
+
+    char* state[2] = {"off", "on"};
+    Link* link;
+    // print links
+    printf("links:\n");
+    for (i=0; i<genome->links.size; i++) {
+        link = list_get(&genome->links, i)->data;
+        printf("%d %s %f %d %d\n", link->inumber, state[link->enabled], link->weight, link->in->id, link->out->id);
+    }
+
+}
 
 void genome_free(Genome* genome) {
     // links and neurons are created within the genome functions

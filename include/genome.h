@@ -53,6 +53,8 @@ void genome_clone(Genome* genome, Genome* clone);
 double genome_diff(Genome* g1, Genome* g2, double c1, double c2, double c3);
 void genome_crossover(Genome* parent1, Genome* parent2, Genome* offspring);
 
+void genome_dump(Genome* genome);
+
 void genome_free(Genome* genome);
 
 #endif //NEAT_GENOME_H

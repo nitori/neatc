@@ -44,7 +44,7 @@ def read_data(filename):
                 hidden = [to_node(v.strip()) for v in line[9:].split(',')]
             elif line.startswith('outputs = '):
                 outputs = [to_node(v.strip()) for v in line[10:].split(',')]
-            elif line == 'connections:':
+            elif line == 'links:':
                 connection_started = True
         else:
             parts = line.split()
