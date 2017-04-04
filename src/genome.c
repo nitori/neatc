@@ -385,20 +385,22 @@ void genome_crossover(Genome* parent1, Genome* parent2, Genome* offspring) {
 }
 
 void genome_dump(Genome* genome) {
-    int level;
     int i;
     Neuron* neuron;
+    ListItem* item;
 
+    size_t s = genome->neurons.size;
     // collect neurons
-    Neuron *inputs[genome->neurons.size];
+    Neuron **inputs = calloc(1, (sizeof(Neuron*)) * s);
     int i_input = 0;
-    Neuron *hidden[genome->neurons.size];
+    Neuron **hidden = calloc(1, (sizeof(Neuron*)) * s);
     int i_hidden = 0;
-    Neuron *outputs[genome->neurons.size];
+    Neuron **outputs = calloc(1, (sizeof(Neuron*)) * s);
     int i_output = 0;
 
     for (i=0; i<genome->neurons.size; i++) {
-        neuron = list_get(&genome->neurons, i)->data;
+        item = list_get(&genome->neurons, i);
+        neuron = item->data;
         if (neuron->level == 0) {
             inputs[i_input] = neuron;
             i_input++;
@@ -445,6 +447,10 @@ void genome_dump(Genome* genome) {
         link = list_get(&genome->links, i)->data;
         printf("%d %s %f %d %d\n", link->inumber, state[link->enabled], link->weight, link->in->id, link->out->id);
     }
+
+    free(inputs);
+    free(outputs);
+    free(hidden);
 
 }
 
