@@ -164,16 +164,31 @@ int genome_mutate(Genome* genome, Population* population, Innovation* innovation
 
 void genome_clone(Genome* genome, Genome* clone) {
     // TODO: because genome_init has changed, this probably needs to change as well
-    int i, j;
+    int i, j, N;
     Neuron* map[genome->neurons.size][2];
     Neuron* neuron;
     Neuron* neuron_clone;
 
     genome_init(clone, genome->max_levels-2, genome->input_count, genome->output_count);
-    clone->max_levels = genome->max_levels;
     clone->species = genome->species;
 
-    for (i=0; i<genome->neurons.size; i++) {
+    N = (int)(clone->input_count + clone->output_count);
+
+    // because of the init method now doing input/output node init, we have
+    // to reassign the sources node ids to the clones node ids.
+    for (i=0; i < N; i++) {
+        neuron = list_get(&genome->neurons, i)->data;
+        neuron_clone = list_get(&clone->neurons, i)->data;
+        neuron_clone->id = neuron->id;
+        map[i][0] = neuron;
+        map[i][1] = neuron_clone;
+        if (neuron_clone->level != neuron->level) {
+            fprintf(stderr, "Cloning failed. Disparity between source and clone input/output nodes discovered.\n");
+            return;
+        }
+    }
+
+    for (i=N; i<genome->neurons.size; i++) {
         neuron = list_get(&genome->neurons, i)->data;
         neuron_clone = new_neuron();
         memcpy(neuron_clone, neuron, sizeof(*neuron));
@@ -193,7 +208,7 @@ void genome_clone(Genome* genome, Genome* clone) {
                 link_clone->in = map[j][1];
             }
             if (link_clone->out == map[j][0]) {
-                link_clone->out = map[j][0];
+                link_clone->out = map[j][1];
             }
         }
         list_append(&clone->links, new_listitem(link_clone));
