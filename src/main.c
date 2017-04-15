@@ -18,12 +18,8 @@
 
 #include "neat.h"
 
-#include "list.h"
-
-#include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include <innovation.h>
 
 
 void print_genome(Genome* genome, const char* name) {
@@ -98,21 +94,25 @@ int main(int argc, char** argv) {
         }
     }
 
-    double inputs[5] = {1,1,1,1,1};
-    double outputs[1] = {0};
+    double inputs[g1.input_count];
+    double outputs[g1.output_count];
+
+    for (i=0; i<g1.input_count; i++) {
+        inputs[i] = 1.0;
+    }
 
     genome_calculate_output(&g1, inputs, outputs);
 
-    print_genome(&g1, "g1");
+    genome_dump(&g1);
 
-    printf("Outputs: ");
+    fprintf(stderr, "Outputs: ");
     for (i=0; i<g1.output_count; i++) {
         if (i>0) {
-            printf(", ");
+            fprintf(stderr, ", ");
         }
-        printf("%f", outputs[i]);
+        fprintf(stderr, "%f", outputs[i]);
     }
-    printf("\n");
+    fprintf(stderr, "\n");
 
     return 0;
 }
