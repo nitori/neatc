@@ -19,7 +19,7 @@
 #include "neat.h"
 
 #include <stdio.h>
-#include <time.h>
+#include <sys/time.h>
 
 
 void print_genome(Genome* genome, const char* name) {
@@ -63,7 +63,10 @@ void print_genome(Genome* genome, const char* name) {
 
 
 int main(int argc, char** argv) {
-    srand((unsigned int)time(NULL));
+    struct timeval time;
+    gettimeofday(&time, NULL);
+    unsigned long long microsec = ((unsigned long long)time.tv_sec * 1000000) + time.tv_usec;
+    srand((unsigned int)microsec);
 
     Population population;
     population_init(&population);
