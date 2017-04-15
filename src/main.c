@@ -40,7 +40,7 @@ void print_genome(Genome* genome, const char* name) {
         } else {
             type = "hidden";
         }
-        printf("  Neuron: [%p, id: %d, level: %d] (%s)\n", neuron, (int)neuron->id, neuron->level, type);
+        printf("  Neuron: [%p, id: %d, level: %d, v: %f, i: %d] (%s)\n", neuron, (int)neuron->id, neuron->level, neuron->value, neuron->input_links, type);
     }
     Link* link;
     char* state;
@@ -87,7 +87,7 @@ int main(int argc, char** argv) {
         hidden = atoi(argv[2]);
     }
 
-    genome_init(&g1, hidden, 5, 5);
+    genome_init(&g1, hidden, 5, 1);
 
     for (i=0; i<max; i++) {
         innovation = new_innovation();
@@ -98,7 +98,21 @@ int main(int argc, char** argv) {
         }
     }
 
-    genome_dump(&g1);
+    double inputs[5] = {1,1,1,1,1};
+    double outputs[1] = {0};
+
+    genome_calculate_output(&g1, inputs, outputs);
+
+    print_genome(&g1, "g1");
+
+    printf("Outputs: ");
+    for (i=0; i<g1.output_count; i++) {
+        if (i>0) {
+            printf(", ");
+        }
+        printf("%f", outputs[i]);
+    }
+    printf("\n");
 
     return 0;
 }

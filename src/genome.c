@@ -397,6 +397,52 @@ void genome_crossover(Genome* parent1, Genome* parent2, Genome* offspring) {
     }
 }
 
+// assume inputs genome->input_count
+void genome_calculate_output(Genome* genome, double inputs[], double outputs[]) {
+    int i, level;
+    Neuron* neuron;
+    Link* link;
+
+    // set inputs
+    for (i=0; i<genome->input_count; i++) {
+        neuron = list_get(&genome->neurons, i)->data;
+        neuron->value = inputs[i];
+        neuron->input_links = 1;
+    }
+
+    // reset all other neurons
+    for (i=(int)genome->input_count; i<genome->neurons.size; i++) {
+        neuron = list_get(&genome->neurons, i)->data;
+        neuron->value = 0.0;
+        neuron->input_links = 0;
+    }
+
+    // needs optimization
+    for (level=0; level<genome->max_levels; level++) {
+        for (i=0; i<genome->links.size; i++) {
+            link = list_get(&genome->links, i)->data;
+            if (!link->enabled) {
+                continue;
+            }
+            if (link->in->level == level) {
+                if (link->in->input_links > 0) {
+                    link->out->value += (link->in->value / link->in->input_links) * link->weight;
+                }
+                link->out->input_links++;
+            }
+        }
+    }
+
+    for (i=0; i<genome->output_count; i++) {
+        neuron = list_get(&genome->neurons, i + (int)genome->input_count)->data;
+        if (neuron->input_links > 0) {
+            outputs[i] = neuron->value / neuron->input_links;
+        } else {
+            outputs[i] = neuron->value;
+        }
+    }
+}
+
 void genome_dump(Genome* genome) {
     int i;
     Neuron* neuron;

@@ -32,6 +32,7 @@ typedef struct Neuron {
     NeuronType type;
     int32_t level;
     double value;
+    int32_t input_links;
 } Neuron;
 
 Neuron* new_neuron();
