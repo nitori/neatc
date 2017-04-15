@@ -76,12 +76,20 @@ int main(int argc, char** argv) {
 
     Genome g1;
 
-    genome_init(&g1);
-    genome_init_inputs(&g1, 5);
-    genome_init_outputs(&g1, 5);
-
     int i;
-    for (i=0; i<100; i++) {
+    int max = 100;
+    int hidden = 20;
+
+    if (argc == 2) {
+        max = atoi(argv[1]);
+    } else if (argc == 3) {
+        max = atoi(argv[1]);
+        hidden = atoi(argv[2]);
+    }
+
+    genome_init(&g1, hidden, 5, 5);
+
+    for (i=0; i<max; i++) {
         innovation = new_innovation();
         if (i == 0) {
             genome_mutate_add_link(&g1, &population, innovation);

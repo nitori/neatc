@@ -39,11 +39,11 @@ def read_data(filename):
     for line in lines:
         if not connection_started:
             if line.startswith('inputs = '):
-                inputs = [to_node(v.strip()) for v in line[9:].split(',')]
+                inputs = [to_node(v.strip()) for v in line[9:].split(',') if v.strip()]
             elif line.startswith('hidden = '):
-                hidden = [to_node(v.strip()) for v in line[9:].split(',')]
+                hidden = [to_node(v.strip()) for v in line[9:].split(',') if v.strip()]
             elif line.startswith('outputs = '):
-                outputs = [to_node(v.strip()) for v in line[10:].split(',')]
+                outputs = [to_node(v.strip()) for v in line[10:].split(',') if v.strip()]
             elif line == 'links:':
                 connection_started = True
         else:

@@ -36,15 +36,15 @@ typedef struct Genome {
     Species* species;
     double fitness;
     int32_t max_levels;
+    size_t input_count;
+    size_t output_count;
     List neurons;
     List links;
 } Genome;
 
 Genome* new_genome();
-void genome_init(Genome* genome);
-
-void genome_init_inputs(Genome* genome, size_t number_of_inputs);
-void genome_init_outputs(Genome* genome, size_t number_of_outputs);
+void genome_init(Genome* genome, int32_t hidden_count, size_t number_of_inputs, size_t number_of_outputs);
+void genome_init_neurons(Genome* genome, size_t number_of_neurons, int32_t level);
 
 int genome_mutate_add_link(Genome* genome, Population* population, Innovation* innovation);
 int genome_mutate_add_neuron(Genome* genome, Population* population, Innovation* innovation);

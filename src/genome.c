@@ -31,15 +31,20 @@ Genome* new_genome() {
     return calloc(1, sizeof(Genome));
 }
 
-void genome_init(Genome* genome) {
+void genome_init(Genome* genome, int32_t hidden_count, size_t number_of_inputs, size_t number_of_outputs) {
     genome->species = NULL;
     // level 0 = input layer
     // level "max_level - 1" = output layer.
     // level 1 to "max_level - 2" = hidden layers.
-    genome->max_levels = 10;  // minimum must be 3
+    genome->max_levels = hidden_count + 2;  // minimum must be 3
     genome->fitness = 0.0;
     list_init(&genome->links);
     list_init(&genome->neurons);
+
+    genome_init_neurons(genome, number_of_inputs, 0);
+    genome_init_neurons(genome, number_of_outputs, genome->max_levels-1);
+    genome->input_count = number_of_inputs;
+    genome->output_count = number_of_outputs;
 }
 
 void genome_init_neurons(Genome* genome, size_t number_of_neurons, int32_t level) {
@@ -51,14 +56,6 @@ void genome_init_neurons(Genome* genome, size_t number_of_neurons, int32_t level
         neuron->level = level;
         list_append(&genome->neurons, new_listitem(neuron));
     }
-}
-
-void genome_init_inputs(Genome* genome, size_t number_of_inputs) {
-    genome_init_neurons(genome, number_of_inputs, 0);
-}
-
-void genome_init_outputs(Genome* genome, size_t number_of_outputs) {
-    genome_init_neurons(genome, number_of_outputs, genome->max_levels-1);
 }
 
 int genome_mutate_add_link(Genome* genome, Population* population, Innovation* innovation) {
@@ -166,12 +163,13 @@ int genome_mutate(Genome* genome, Population* population, Innovation* innovation
 }
 
 void genome_clone(Genome* genome, Genome* clone) {
+    // TODO: because genome_init has changed, this probably needs to change as well
     int i, j;
     Neuron* map[genome->neurons.size][2];
     Neuron* neuron;
     Neuron* neuron_clone;
 
-    genome_init(clone);
+    genome_init(clone, genome->max_levels-2, genome->input_count, genome->output_count);
     clone->max_levels = genome->max_levels;
     clone->species = genome->species;
 
@@ -274,6 +272,7 @@ Neuron* genome_find_neuron(Genome* genome, NeuronId id) {
 
 
 void genome_crossover(Genome* parent1, Genome* parent2, Genome* offspring) {
+    // TODO: because genome_init changed, this probably needs to change as well
     // matching links are inherited randomly.
     // disjoint genes are inherited from the more fit gene.
     if (parent1->max_levels != parent2->max_levels) {
@@ -298,7 +297,7 @@ void genome_crossover(Genome* parent1, Genome* parent2, Genome* offspring) {
 
     int i;
 
-    genome_init(offspring);
+    genome_init(offspring, parent1->max_levels-2, parent1->input_count, parent1->output_count);
     offspring->species = parent1->species;
     offspring->max_levels = parent1->max_levels;
 
@@ -389,53 +388,23 @@ void genome_dump(Genome* genome) {
     Neuron* neuron;
     ListItem* item;
 
-    size_t s = genome->neurons.size;
-    // collect neurons
-    Neuron **inputs = calloc(1, (sizeof(Neuron*)) * s);
-    int i_input = 0;
-    Neuron **hidden = calloc(1, (sizeof(Neuron*)) * s);
-    int i_hidden = 0;
-    Neuron **outputs = calloc(1, (sizeof(Neuron*)) * s);
-    int i_output = 0;
-
+    printf("inputs = ");
     for (i=0; i<genome->neurons.size; i++) {
         item = list_get(&genome->neurons, i);
         neuron = item->data;
-        if (neuron->level == 0) {
-            inputs[i_input] = neuron;
-            i_input++;
-        } else if (neuron->level == genome->max_levels - 1) {
-            outputs[i_output] = neuron;
-            i_output++;
+        if (i < genome->input_count) {
+            printf("%d [%d], ", neuron->id, neuron->level);
+        } else if ((i - genome->input_count) < genome->output_count) {
+            if (i == genome->input_count) {
+                printf("\noutputs = ");
+            }
+            printf("%d [%d], ", neuron->id, neuron->level);
         } else {
-            hidden[i_hidden] = neuron;
-            i_hidden++;
+            if (i == genome->input_count + genome->output_count) {
+                printf("\nhidden = ");
+            }
+            printf("%d [%d], ", neuron->id, neuron->level);
         }
-    }
-
-    // print neurons
-    printf("inputs = ");
-    for (i=0; i<i_input; i++) {
-        if (i>0) {
-            printf(", ");
-        }
-        printf("%d [%d]", inputs[i]->id, inputs[i]->level);
-    }
-    printf("\n");
-    printf("hidden = ");
-    for (i=0; i<i_hidden; i++) {
-        if (i>0) {
-            printf(", ");
-        }
-        printf("%d [%d]", hidden[i]->id, hidden[i]->level);
-    }
-    printf("\n");
-    printf("outputs = ");
-    for (i=0; i<i_output; i++) {
-        if (i>0) {
-            printf(", ");
-        }
-        printf("%d [%d]", outputs[i]->id, outputs[i]->level);
     }
     printf("\n");
 
@@ -447,11 +416,6 @@ void genome_dump(Genome* genome) {
         link = list_get(&genome->links, i)->data;
         printf("%d %s %f %d %d\n", link->inumber, state[link->enabled], link->weight, link->in->id, link->out->id);
     }
-
-    free(inputs);
-    free(outputs);
-    free(hidden);
-
 }
 
 void genome_free(Genome* genome) {
