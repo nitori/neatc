@@ -163,7 +163,6 @@ int genome_mutate(Genome* genome, Population* population, Innovation* innovation
 }
 
 void genome_clone(Genome* genome, Genome* clone) {
-    // TODO: because genome_init has changed, this probably needs to change as well
     int i, j, N;
     Neuron* map[genome->neurons.size][2];
     Neuron* neuron;
